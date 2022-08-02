@@ -1,6 +1,10 @@
+# Summary
+
+This repository includes and explains the code used for the comparative analysis presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference. The [data collection code](#datacollection) is written in Java, while the [data and graph mining code](#datamining) is written in Julia (and partly in Python).
+
 # Data collection (Java)
 
-The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). In particular, we make use of the Java library [mmdb-2019-04-29.jar](https://dblp.org/src/mmdb-2019-04-29.jar). You can see examples of the usage of this code in the class `Main.java`.
+<a name="datacollection"></a>The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). In particular, we make use of the Java library [mmdb-2019-04-29.jar](https://dblp.org/src/mmdb-2019-04-29.jar). You can see examples of the usage of this code in the class `Main.java`.
 
 ## Using the `ccdm.jar` file
 
@@ -128,3 +132,7 @@ The input of the `main` method of this class is the acronym of the conference an
 `1820,3744,22`
 
 since Pierluigi Crescenzi and Andrea Marino (whose ids are 1820 and 3744, respectively) coauthored 22 papers.
+
+# Data and graph mining (Julia)
+
+<a name="datamining"></a>The data and graph mining software has been developed in Julia.
