@@ -6,4 +6,74 @@ The data collection software has been developed in Java, mostly because this all
 
 ### Class `ConferenceAuthorDataCollector.java`
 
-The input of the `main` method of this class is the global conference acronym followed by a sequence of groups of six arguments, each specifying the type, the DBLP directory, the acronym, the first year, the last year, and the number of parts of each edition of the considered conference. Indeed, the typical address of the table of contents of the edition of a conference starts with the prefix `https://dblp.org/db/`, followed by the type of the conference publication. For example, the *ACM-SIGACT Symposium on Principles of Programming Languages* has been published as conference proceedings until the 2017 edition. Successively, it has been published as a journal (in particular, the *Proceedings of the ACM on Programming Languages* journal). Hence, until 2017 the type of this conference has been `conf`, while afterwards it has become `journals`. The address of the table of contents continues with the name of the DBLP directory containing the table of contents of the conference. This directory can change from one year to the other, mostly because of the joint editions with other conferences. For example, the 2014 edition of the *ACM/IEEE Symposium on Logic in Computer Science* has been a joint edition with the *Annual Conference for Computer Science Logic*. For this reason, the address of the table of contents of the former conference continues with `csl`, instead of with `lics`, as in the other editions. The address continues with the acronym of the conference concatenated with the year of the edition and, if multiple parts are present, the part number (separated by a dash). First note that the acronym of the conference can change: for example, the *International Symposium on Distributed Computing* was originally named *Workshop on Distributed Algorithms*. For this reason, its acronym has been `wdag` until the 1997 edition, and it became `disc` afterwards. Secondly, note that in many cases the year is indicated by the last two digits until the 1999 edition of a conference, and by the four digits afterwards (there are also cases in which these two different representations alternate in the period before 1999). Finally, the proceedings of some editions of a conference are split into two or more parts (for instance, this is true in the case of the *International Colloquium on Automata, Languages and Programming* whenever the edition was split into three tracks.
+The input of the `main` method of this class is the global conference acronym followed by a sequence of groups of six arguments, each specifying the type, the DBLP directory, the acronym, the first year, the last year, and the number of parts of each edition of the considered conference. Indeed, the typical address of the table of contents of the edition of a conference starts with the prefix `https://dblp.org/db/`, followed by the type of the conference publication. For example, the *ACM-SIGACT Symposium on Principles of Programming Languages* has been published as conference proceedings until the 2017 edition. Successively, it has been published as a journal (in particular, the *Proceedings of the ACM on Programming Languages* journal). Hence, until 2017 the type of this conference has been `conf`, while afterwards it has become `journals`. The address of the table of contents continues with the name of the DBLP directory containing the table of contents of the conference. This directory can change from one year to the other, mostly because of the joint editions with other conferences. For example, the 2014 edition of the *ACM/IEEE Symposium on Logic in Computer Science* has been a joint edition with the *Annual Conference for Computer Science Logic*. For this reason, the address of the table of contents of the former conference continues with `csl`, instead of with `lics`, as in the other editions. The address continues with the acronym of the conference concatenated with the year of the edition and, if multiple parts are present, the part number (separated by a dash). First note that the acronym of the conference can change: for example, the *International Symposium on Distributed Computing* was originally named *Workshop on Distributed Algorithms*. For this reason, its acronym has been `wdag` until the 1997 edition, and it became `disc` afterwards. Secondly, note that in many cases the year is indicated by the last two digits until the 1999 edition of a conference, and by the four digits afterwards (there are also cases in which these two different representations alternate in the period before 1999). Finally, the proceedings of some editions of a conference are split into two or more parts (for instance, this is true in the case of the *International Colloquium on Automata, Languages and Programming* whenever the edition was split into three tracks. The simplest list of arguments that have to be passed to this class is, for example, the one to gather the data concerning the *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*. In this case, the list is simply the following one:
+
+`podc conf podc podc 82 99 1 conf podc podc 2000 2021 1`
+
+Indeed, this conference has been held every year starting from 1982, it never changed its name, its editions have never been joint with other conferences. On the other hand, one of the longest list of arguments that have to be passed to this class is the one to gather the data concerning the *International Colloquium on Automata, Languages and Programming*. In this case, the list is the following one:
+
+`icalp conf icalp icalp 72 72 1 conf icalp icalp 74 74 1 conf icalp icalp 76 99 1 conf icalp icalp 2000 2005 1 conf icalp icalp 2006 2006 2 conf icalp icalp 2007 2007 1 conf icalp icalp 2008 2015 2 conf icalp icalp 2016 2021 1`
+
+Indeed, there was no edition in 1973 and in 1975, while in 2006 and from 2008 to 2015 there were two parts of the proceedings, and the conference never changed its name.
+
+Executing this class produces three text files, that is, `id_name_key.txt`, `author_paper_titles.txt`, and `author_conferences.txt` (see the `data` folder). The first one contains the list of the authors who presented at least one paper at the conference: for each author, the corresponding line contains the id, the first and last name, and the DBLP key of the author, separated by `##`. For example, a line corresponding to Pierluigi Crescenzi might be the following one:
+
+`i##1820##n##Pierluigi Crescenzi##k##homepages/c/PCrescenzi`
+
+The second text file contains the title of *all* papers (co)authored by one of the authors included in the `id_name_key.txt` file and published on a journal or presented at a conference (informal publications, such as `arxiv` papers, are not considered). For each author, there is a line containing the id, the first and last name, and the DBLP key of the author, such as before. Successively, for each publication, there is a line containing the year and the title of the publication itself, such as the following one:
+
+`y##1999##t##Max NP-completeness Made Easy.`
+
+Finally, the third text file contains the name of the conferences at which each author presented a paper (once again, informal publications are not considered). For each author, there is a line containing the id, the first and last name, and the DBLP key of the author, such as before. Successively, for each conference, there is a line containing the year and the name of the conference itself, such as the following one:
+
+`y##1998##c##STOC`
+
+It has to be noted that in this file, unfortunately, the same conference appears with slightly different names (sometimes even due to typographic errors), and that the number of different conferences can be quite high. For example, in the case of the *International Colloquium on Automata, Languages and Programming*, this file contains 6378 different conference names.
+
+Finally, the execution of this class creates, within the directory named with the global conference acronym, the directory `papers`. Within this directory, for each year in which there was an edition of the conference, the class creates a file containing all the titles of the papers presented at that edition.
+
+## Collecting papers and temporal adjacency matrices
+
+### Class `ConferenceTemporalAdjacencyMatrixCreator.java`
+
+The first input of the `main` method of this class is the conference acronym, while the next inputs are grouped into blocks of five values, that is, the DBLP directory, the prefix of the DBLP file, the first year, and the last year of each edition of the conference. The last input is the list of exceptions (separated by comma) for the conference (that is, the strings that should not appear in the DBLP URL). Note that, for all conferences, two exceptions are the DBLP directory followed by `/`, the prefix, and the letter `w`, and the DBLP directory followed by `/`, the prefix, the year, and the letter `w`. Executing this class produces the three text files `papers.txt`, `temporal_adjacency_matrix.txt`, and `temporal_adjacency_matrix_conf.txt` (which are all written in the directory whose name is the global acronym of the conference). The first file contains the list of the papers presented at the conference (the satellite workshops are not considered): for each paper, the corresponding line contains the year, the DBLP key of the paper, and the list of ids of the authors (the ids refer to the file `id_name_key.txt` created in the previous step). For example, the line corresponding to the paper *Online Load Balancing Made Simple: Greedy Strikes Back* by Pierluigi Crescenzi et al is the following one:
+
+`y##2003##k##conf/icalp/CrescenziGNPU03##a##[1820, 635, 1821, 1822, 1823]`
+
+The second file contains the temporal adjacency matrix of the authors collected in the previous step, by considering all papers published on a journal or presented at a conference (informal publications, such as `arxiv` papers, are not considered). For each pair of authors who coauthored at least one paper, the corresponding line contains the ids of the two authors and the multi-list of the years in which they coauthored a paper (it is a multi-list since two authors might have coauthored more than one paper in the same year). For example, the line corresponding to Pierluigi Crescenzi and Luca Trevisan (whose ids with respect to the *International Colloquium on Automata, Languages and Programming* are 1820 and 1557, respectively) is the following one:
+
+`(1557,1820): [1995, 1994, 1996, 2017, 1994, 2001, 1996, 2000, 1999, 1999]`
+
+(note that the two authors coauthored two papers in 1994, 1996, and 1999).
+
+The third file contains the temporal adjacency matrix of the authors collected in the previous step, by considering only papers presented at the conference. The format is the same as in the previous file. For example, the line corresponding to Pierluigi Crescenzi and Giorgio Gambosi (whose ids with respect to the *International Colloquium on Automata, Languages and Programming* are 1820 and 635, respectively) is the following one:
+
+`(635,1820): [2003]`
+
+## Creating the temporal graphs
+
+From now on, we will not need anymore the file `dblp.xml`, and we will make use of the text files generated in the previous two steps.
+
+### Class `TemporalGraphCreator.java`
+
+The input of the `main` method of this class is the acronym of the conference. Executing this class produces the two text files `temporal_graph.txt` and `temporal_graph_conf.txt` containing the two temporal graphs induced by the authors collected in the previous step, by considering all papers published on a journal or presented at a conference (informal publications, such as `arxiv` papers, are not considered), and only papers presented at the conference, respectively. Each temporal graph is a list of temporal edges (*u*,*v*,*t*,*w*), where *u* and *v* are the ids of two authors, *t* is the year in which they coauthored at least one paper, and *w* is the number of papers they coauthored in year *t*. For example the first file with respect to the *International Colloquium on Automata, Languages and Programming* contains the line
+
+`268,1820,1998,3`
+
+since Pierluigi Crescenzi and Christos H. Papadimitriou (whose ids are 1820 and 268, respectively) coauthored three papers in 1998. The second file with respect to the *International Colloquium on Automata, Languages and Programming*, instead, contains the line
+
+`635,1820,2003,1`
+
+since Pierluigi Crescenzi and Giorgio Gambosi co-presented one paper at ICALP in 2003.
+
+A sorted version of the previous two files (with respect to the year) can be obtained by executing the class `TemporalGraphSorter.java`. The input of the `main` method of this class is the acronym of the conference and which produces the two files `temporal_graph_sorted.txt` and `temporal_graph_conf_sorted.txt`. With respect to the *International Colloquium on Automata, Languages and Programming*, for example, the first temporal edge in the first file is dated 1959 and corresponds to a paper coauthored by Dana S. Scott and Michael O. Rabin (who have both published a paper in the *International Colloquium on Automata, Languages and Programming*), while the first temporal edge in the second file is dated, clearly, 1972.
+
+## Creating the static graphs
+
+### Class `Temporal2Static.java`
+
+The input of the `main` method of this class is the acronym of the conference and the first and the last year to be considered. Executing this class produces the static version of the two temporal graphs generated in the previous step. In particular, it produces the two text files `static_graph.txt` and `static_graph_conf.txt` containing the two weighted graphs in which there is an edge (*u*,*v*) with weight *w* if and only *w* is the sum of the weights of all temporal edges between *u* and *v* in the corresponding temporal graph. Each weighted graph is a list of weighted edges (*u*,*v*,*w*). For example, with respect to the *International Colloquium on Automata, Languages and Programming*), the first file contains the line
+
+`1820,3744,22`
+
+since Pierluigi Crescenzi and Andrea Marino (whose ids are 1820 and 3744, respectively) coauthored 22 papers.
