@@ -51,7 +51,7 @@ In order to collect the data for another conference, then the necessary argument
 
 `java -jar ccdm.jar 1 fun conf fun fun 2007 2021 1 fun fun 2007 2021 ne`
 
-(indeed, the first edition of this conference has been in 1998, but only a selection of the presented papers at the the first three editions has been published in three different journal).
+(indeed, the first edition of this conference has been in 1998, but only a selection of the presented papers at the the first three editions has been published in three different journals).
 
 ## Collecting authors and their publications, and paper titles
 
