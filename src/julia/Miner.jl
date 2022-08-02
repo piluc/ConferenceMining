@@ -26,8 +26,7 @@ using WordCloud
 """
 The path to the directory containing the text files produced by the Java library Cccdm.jar (default path is `/Miner/data/`). This directory has to be a subdirectory of the working directory of Julia (the working directory can be shown by issuing the command `pwd()`).
 """
-# global path_to_files = "/Users/piluc/Desktop/icalp50/ccdm/"
-global path_to_files = "/Users/piluc/Dropbox (GSSI)/research/dblp/exec/"
+global path_to_files = "path_to_directory_containing_the_conference_data_collected_with_Java_code"
 """
 The list of conferences already downloaded (taken form DBLP on March 2022).
 """
