@@ -1,6 +1,8 @@
 # Data collection (Java)
 
-The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). You can see examples of the usage of this code in the class `Main.java`.
+The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). In particular, we make use of the Java library [mmdb-2019-04-29.jar](https://dblp.org/src/mmdb-2019-04-29.jar). You can see examples of the usage of this code in the class `Main.java`.
+
+## Collecting authors and their publications, and paper titles
 
 ## Collecting authors and their publications, and paper titles
 
