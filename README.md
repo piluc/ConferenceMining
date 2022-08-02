@@ -4,7 +4,7 @@ The data collection software has been developed in Java, mostly because this all
 
 ## Using the `ccdm.jar` file
 
-By default the code collects the data of the following eighteen theoretical computer science conferences.
+By default the code collects the data of the following eighteen theoretical computer science conferences (up to the 2021 edition).
 
 1.  CAV: *International Conference on Computer Aided Verification*.
 
