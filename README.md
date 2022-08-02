@@ -2,7 +2,56 @@
 
 The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). In particular, we make use of the Java library [mmdb-2019-04-29.jar](https://dblp.org/src/mmdb-2019-04-29.jar). You can see examples of the usage of this code in the class `Main.java`.
 
-## Collecting authors and their publications, and paper titles
+## Using the `ccdm.jar` file
+
+By default the code collects the data of the following eighteen theoretical computer science conferences.
+
+1.  CAV: *International Conference on Computer Aided Verification*.
+
+2.  CONCUR: *International Conference on Concurrency Theory*.
+
+3.  CRYPTO: *Annual International Cryptology Conference*.
+
+4.  CSL: *Annual Conference for Computer Science Logic*.
+
+5.  DISC: *International Symposium on Distributed Computing*.
+
+6.  ESA: *European Symposium on Algorithms*.
+
+7.  ESOP: *European Symposium on Programming*.
+
+8.  EUROCRYPT: *International Conference on the Theory and Application of Cryptographic Techniques*.
+
+9.  FOCS: *IEEE Annual Symposium on Foundations of Computer Science*.
+
+10. ICALP: *International Colloquium on Automata, Languages and Programming*.
+
+11. LICS: *ACM/IEEE Symposium on Logic in Computer Science*.
+
+12. MFCS: *International Symposium on Mathematical Foundations of Computer Science*.
+
+13. PODC: *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*.
+
+14. POPL: *ACM-SIGACT Symposium on Principles of Programming Languages*.
+
+15. SODA: *ACM-SIAM Symposium on Discrete Algorithms*.
+
+16. STACS: *Symposium on Theoretical Aspects of Computer Science*.
+
+17. STOC: *Symposium on the Theory of Computing*.
+
+18. TACAS: *International Conference on Tools and Algorithms for Construction and Analysis of Systems*.
+
+To this aim, once the files `dblp.xml` and `dblp.dtd` (which are available at the DBLP web site) have been downloaded and saved in
+directory `data`, it is sufficient to execute the following command:
+
+`java -jar ccdm.jar`
+
+In order to collect the data for another conference, then the necessary arguments have to be passed to the Java executable archive. For example, in order to collect the data of the conference *Fun with Algorithms*, we can execute the following command:
+
+`java -jar ccdm.jar 1 fun conf fun fun 2007 2021 1 fun fun 2007 2021 ne`
+
+(indeed, the first edition of this conference has been in 1998, but only a selection of the presented papers at the the first three editions has been published in three different journal).
 
 ## Collecting authors and their publications, and paper titles
 
