@@ -135,4 +135,12 @@ since Pierluigi Crescenzi and Andrea Marino (whose ids are 1820 and 3744, respec
 
 # Data and graph mining (Julia)
 
-<a name="datamining"></a>The data and graph mining software has been developed in Julia.
+<a name="datamining"></a>The data and graph mining software has been developed in Julia. The documentation of the functions included in the code is available at [http://www.pilucrescenzi.it/miner/docs/](http://www.pilucrescenzi.it/miner/docs/). In order to execute the code, the Julia REPL has to be launched starting from the directory containing the directory `conferencemining` which has to contain the `src` directory including the Julia code files. In the REPL, the following command has to be executed (of course all directory names can be changed):
+
+`include("conferencemining/src/Miner.jl")`
+
+(see the code in `Miner.jl` for the required packages). Once the module `Miner` has been included, the following commands can be used in order to generate the plots for the CONCUR conference (of course the arguments can be changed for other conferences).
+
+1. Basic data mining plots.
+
+`Miner.one_conference_data_mining("concur", true, 10)`
