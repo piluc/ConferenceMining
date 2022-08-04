@@ -24,11 +24,11 @@ using TextAnalysis
 using WordCloud
 
 """
-The path to the directory containing the text files produced by the Java library Cccdm.jar (default path is `/Miner/data/`). This directory has to be a subdirectory of the working directory of Julia (the working directory can be shown by issuing the command `pwd()`).
+The path to the directory `conferences` containing the text files produced by the Java library `ccdm.jar` (default path is `./conferencemining/`). This directory has to be a subdirectory of the working directory of Julia (the working directory can be shown by issuing the command `pwd()`).
 """
-global path_to_files = "path_to_directory_containing_the_conference_data_collected_with_Java_code"
+global path_to_files = "./conferencemining/"
 """
-The list of conferences already downloaded (taken form DBLP on March 2022).
+The list of conferences downloaded by default (March 2022) by running the `ccdm.jar` Java file without arguments.
 """
 global downloaded_conf = ["cav" "crypto" "csl" "disc" "esa" "esop" "eurocrypt" "focs" "icalp" "lics" "podc" "popl" "soda" "stacs" "stoc" "tacas"]
 """
@@ -62,11 +62,7 @@ EnglishText.Pluralize.IRREGULAR_CLS["calculus"] = "calculus"
 EnglishText.Pluralize.IRREGULAR_CLS["process"] = "process"
 EnglishText.Pluralize.IRREGULAR_CLS["synchronous"] = "synchronous"
 
-include("minerutils.jl")
-include("icalpminer.jl")
+include("dataminerutils.jl")
 include("dataminer.jl")
-include("genderminer.jl")
-include("graphminer.jl")
-include("titleminer.jl")
 
 end
