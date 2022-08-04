@@ -71,6 +71,8 @@ In order to collect the data for another conference, then the necessary argument
 
 (indeed, the first edition of this conference has been in 1998, but only a selection of the presented papers at the the first three editions has been published in three different journals). As it will be explained in the following, the list of arguments starts with an integer and the conference acronym, it continues with a series of blocks of six arguments each and with a series of blocks of four arguments each, and it ends with one final argument. The integer at the beginning of the arguments indicates how many blocks of four arguments are present (in the above example, we have one block of six arguments, that is, `conf fun fun 2007 2021 1` and one block of four arguments, that is, `fun fun 2007 2021`).
 
+Note that the execution of the above two commands may require a few minutes (mostly because of the time necessary to process the XML file). Once the execution terminates, a directory conferences should have been created containing one directory for each conference, including all the data necessary for performing the [data and graph mining](#datamining).
+
 ## Collecting authors and their publications, and paper titles<a name="authorspubs"></a>
 
 ### Class `ConferenceAuthorDataCollector.java`<a name="ConferenceAuthorDataCollector"></a>
