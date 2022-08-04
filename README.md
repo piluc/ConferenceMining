@@ -1,12 +1,26 @@
-# Summary
+# Introduction
 
-This repository includes and explains the code used for the comparative analysis presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference. The [data collection code](#datacollection) is written in Java, while the [data and graph mining code](#datamining) is written in Julia (and partly in Python).
+This repository includes and explains the code used for the comparative analysis presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference.
 
-# Data collection (Java)
+## Table of contents
 
-<a name="datacollection"></a>The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). In particular, we make use of the Java library [mmdb-2019-04-29.jar](https://dblp.org/src/mmdb-2019-04-29.jar). You can see examples of the usage of this code in the class `Main.java`.
+1. [Data collection code](#datacollection)
+    1. [Using the `ccdm.jar` file](#ccdm.jar)
+    2. [Collecting authors and their publications, and paper titles](#authorspubs)
+        1. [Class `ConferenceAuthorDataCollector.java`](#ConferenceAuthorDataCollector)
+    3. [Collecting papers and temporal adjacency matrices](#paperstemporal)
+        1. [Class `ConferenceTemporalAdjacencyMatrixCreator.java`](#ConferenceTemporalAdjacencyMatrixCreator)
+    4. [Creating the temporal graphs](#temporal)
+        1. [Class `TemporalGraphCreator.java`](#TemporalGraphCreator)
+    5. [Creating the static graphs](#static)
+        1. [Class `Temporal2Static.java`](#Temporal2Static)
+2. [Data and graph mining code](#datamining)
 
-## Using the `ccdm.jar` file
+# Data collection (Java)<a name="datacollection"></a>
+
+The data collection software has been developed in Java, mostly because this allowed us to take advantage of the Java library available on the DBLP web site (we used the DBLP XML file dated March 20, 2022). In particular, we make use of the Java library [mmdb-2019-04-29.jar](https://dblp.org/src/mmdb-2019-04-29.jar). You can see examples of the usage of this code in the class `Main.java`.
+
+## Using the `ccdm.jar` file<a name="ccdm.jar"></a>
 
 By default the code collects the data of the following eighteen theoretical computer science conferences (up to the 2021 edition).
 
@@ -57,9 +71,9 @@ In order to collect the data for another conference, then the necessary argument
 
 (indeed, the first edition of this conference has been in 1998, but only a selection of the presented papers at the the first three editions has been published in three different journals).
 
-## Collecting authors and their publications, and paper titles
+## Collecting authors and their publications, and paper titles<a name="authorspubs"></a>
 
-### Class `ConferenceAuthorDataCollector.java`
+### Class `ConferenceAuthorDataCollector.java`<a name="ConferenceAuthorDataCollector"></a>
 
 The input of the `main` method of this class is the global conference acronym followed by a sequence of groups of six arguments, each specifying the type, the DBLP directory, the acronym, the first year, the last year, and the number of parts of each edition of the considered conference. Indeed, the typical address of the table of contents of the edition of a conference starts with the prefix `https://dblp.org/db/`, followed by the type of the conference publication. For example, the *ACM-SIGACT Symposium on Principles of Programming Languages* has been published as conference proceedings until the 2017 edition. Successively, it has been published as a journal (in particular, the *Proceedings of the ACM on Programming Languages* journal). Hence, until 2017 the type of this conference has been `conf`, while afterwards it has become `journals`. The address of the table of contents continues with the name of the DBLP directory containing the table of contents of the conference. This directory can change from one year to the other, mostly because of the joint editions with other conferences. For example, the 2014 edition of the *ACM/IEEE Symposium on Logic in Computer Science* has been a joint edition with the *Annual Conference for Computer Science Logic*. For this reason, the address of the table of contents of the former conference continues with `csl`, instead of with `lics`, as in the other editions. The address continues with the acronym of the conference concatenated with the year of the edition and, if multiple parts are present, the part number (separated by a dash). First note that the acronym of the conference can change: for example, the *International Symposium on Distributed Computing* was originally named *Workshop on Distributed Algorithms*. For this reason, its acronym has been `wdag` until the 1997 edition, and it became `disc` afterwards. Secondly, note that in many cases the year is indicated by the last two digits until the 1999 edition of a conference, and by the four digits afterwards (there are also cases in which these two different representations alternate in the period before 1999). Finally, the proceedings of some editions of a conference are split into two or more parts (for instance, this is true in the case of the *International Colloquium on Automata, Languages and Programming* whenever the edition was split into three tracks. The simplest list of arguments that have to be passed to this class is, for example, the one to gather the data concerning the *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*. In this case, the list is simply the following one:
 
@@ -87,9 +101,9 @@ It has to be noted that in this file, unfortunately, the same conference appears
 
 Finally, the execution of this class creates, within the directory named with the global conference acronym, the directory `papers`. Within this directory, for each year in which there was an edition of the conference, the class creates a file containing all the titles of the papers presented at that edition.
 
-## Collecting papers and temporal adjacency matrices
+## Collecting papers and temporal adjacency matrices<a name="paperstemporal"></a>
 
-### Class `ConferenceTemporalAdjacencyMatrixCreator.java`
+### Class `ConferenceTemporalAdjacencyMatrixCreator.java`<a name="ConferenceTemporalAdjacencyMatrixCreator"></a>
 
 The first input of the `main` method of this class is the conference acronym, while the next inputs are grouped into blocks of five values, that is, the DBLP directory, the prefix of the DBLP file, the first year, and the last year of each edition of the conference. The last input is the list of exceptions (separated by comma) for the conference (that is, the strings that should not appear in the DBLP URL). Note that, for all conferences, two exceptions are the DBLP directory followed by `/`, the prefix, and the letter `w`, and the DBLP directory followed by `/`, the prefix, the year, and the letter `w`. Executing this class produces the three text files `papers.txt`, `temporal_adjacency_matrix.txt`, and `temporal_adjacency_matrix_conf.txt` (which are all written in the directory whose name is the global acronym of the conference). The first file contains the list of the papers presented at the conference (the satellite workshops are not considered): for each paper, the corresponding line contains the year, the DBLP key of the paper, and the list of ids of the authors (the ids refer to the file `id_name_key.txt` created in the previous step). For example, the line corresponding to the paper *Online Load Balancing Made Simple: Greedy Strikes Back* by Pierluigi Crescenzi et al is the following one:
 
@@ -105,11 +119,11 @@ The third file contains the temporal adjacency matrix of the authors collected i
 
 `(635,1820): [2003]`
 
-## Creating the temporal graphs
+## Creating the temporal graphs<a name="temporal"></a>
 
 From now on, we will not need anymore the file `dblp.xml`, and we will make use of the text files generated in the previous two steps.
 
-### Class `TemporalGraphCreator.java`
+### Class `TemporalGraphCreator.java`<a name="TemporalGraphCreator"></a>
 
 The input of the `main` method of this class is the acronym of the conference. Executing this class produces the two text files `temporal_graph.txt` and `temporal_graph_conf.txt` containing the two temporal graphs induced by the authors collected in the previous step, by considering all papers published on a journal or presented at a conference (informal publications, such as `arxiv` papers, are not considered), and only papers presented at the conference, respectively. Each temporal graph is a list of temporal edges (*u*,*v*,*t*,*w*), where *u* and *v* are the ids of two authors, *t* is the year in which they coauthored at least one paper, and *w* is the number of papers they coauthored in year *t*. For example the first file with respect to the *International Colloquium on Automata, Languages and Programming* contains the line
 
@@ -123,9 +137,9 @@ since Pierluigi Crescenzi and Giorgio Gambosi co-presented one paper at ICALP in
 
 A sorted version of the previous two files (with respect to the year) can be obtained by executing the class `TemporalGraphSorter.java`. The input of the `main` method of this class is the acronym of the conference and which produces the two files `temporal_graph_sorted.txt` and `temporal_graph_conf_sorted.txt`. With respect to the *International Colloquium on Automata, Languages and Programming*, for example, the first temporal edge in the first file is dated 1959 and corresponds to a paper coauthored by Dana S. Scott and Michael O. Rabin (who have both published a paper in the *International Colloquium on Automata, Languages and Programming*), while the first temporal edge in the second file is dated, clearly, 1972.
 
-## Creating the static graphs
+## Creating the static graphs<a name="static"></a>
 
-### Class `Temporal2Static.java`
+### Class `Temporal2Static.java`<a name="Temporal2Static"></a>
 
 The input of the `main` method of this class is the acronym of the conference and the first and the last year to be considered. Executing this class produces the static version of the two temporal graphs generated in the previous step. In particular, it produces the two text files `static_graph.txt` and `static_graph_conf.txt` containing the two weighted graphs in which there is an edge (*u*,*v*) with weight *w* if and only *w* is the sum of the weights of all temporal edges between *u* and *v* in the corresponding temporal graph. Each weighted graph is a list of weighted edges (*u*,*v*,*w*). For example, with respect to the *International Colloquium on Automata, Languages and Programming*), the first file contains the line
 
@@ -133,9 +147,9 @@ The input of the `main` method of this class is the acronym of the conference an
 
 since Pierluigi Crescenzi and Andrea Marino (whose ids are 1820 and 3744, respectively) coauthored 22 papers.
 
-# Data and graph mining (Julia)
+# Data and graph mining (Julia)<a name="datamining"></a>
 
-<a name="datamining"></a>The data and graph mining software has been developed in Julia. The documentation of the functions included in the code is available at [http://www.pilucrescenzi.it/miner/docs/](http://www.pilucrescenzi.it/miner/docs/). In order to execute the code, the Julia REPL has to be launched starting from the directory containing the directory `conferencemining` which has to contain the `src` directory including the Julia code files. In the REPL, the following command has to be executed (of course all directory names can be changed):
+The data and graph mining software has been developed in Julia. The documentation of the functions included in the code is available at [http://www.pilucrescenzi.it/miner/docs/](http://www.pilucrescenzi.it/miner/docs/). In order to execute the code, the Julia REPL has to be launched starting from the directory containing the directory `conferencemining` which has to contain the `src` directory including the Julia code files. In the REPL, the following command has to be executed (of course all directory names can be changed):
 
 `include("conferencemining/src/Miner.jl")`
 
