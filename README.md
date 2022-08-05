@@ -159,7 +159,7 @@ The data and graph mining software has been developed in Julia. The documentatio
 
 1. Basic data mining plots.
 
-`Main.Miner.one_conference_data_mining("concur", true, 10)`
+    `Main.Miner.one_conference_data_mining("concur", true, 10)`
 
 2. Sex analysis.
 
