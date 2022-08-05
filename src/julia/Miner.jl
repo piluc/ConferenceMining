@@ -66,5 +66,9 @@ include("dataminerutils.jl")
 include("dataminer.jl")
 include("sexminerutils.jl")
 include("sexminer.jl")
+include("titleminerutils.jl")
+include("titleminer.jl")
+include("graphminerutils.jl")
+include("graphminer.jl")
 
 end
