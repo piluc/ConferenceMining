@@ -164,3 +164,7 @@ The data and graph mining software has been developed in Julia. The documentatio
 2. Sex analysis.
 
 `Miner.one_conference_sex_mining("concur", true)`
+
+3. Title analysis.
+
+`Miner.one_conference_title_mining("concur", 5, 10)`
