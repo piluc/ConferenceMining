@@ -155,8 +155,12 @@ The data and graph mining software has been developed in Julia. The documentatio
 
 `include("conferencemining/src/Miner.jl")`
 
-(see the code in `Miner.jl` for the required packages). Once the module `Miner` has been included, the following commands can be used in order to generate the plots for the CONCUR conference (of course the arguments can be changed for other conferences).
+(see the code in `Miner.jl` for the required packages). Once the module `Miner` has been included, the following commands can be used in order to generate the plots for the CONCUR conference (see the documentation for the meaning of the arguments, which, of course, can be changed for other conferences).
 
 1. Basic data mining plots.
 
 `Miner.one_conference_data_mining("concur", true, 10)`
+
+2. Sex analysis.
+
+`Miner.one_conference_sex_mining("concur", true)`
