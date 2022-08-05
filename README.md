@@ -168,3 +168,7 @@ The data and graph mining software has been developed in Julia. The documentatio
 3. Title analysis.
 
 `Miner.one_conference_title_mining("concur", 5, 10)`
+
+4. Graph mining
+
+`Miner.one_conference_graph_mining("concur", 10, [143, 271])`
