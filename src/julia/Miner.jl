@@ -64,5 +64,7 @@ EnglishText.Pluralize.IRREGULAR_CLS["synchronous"] = "synchronous"
 
 include("dataminerutils.jl")
 include("dataminer.jl")
+include("sexminerutils.jl")
+include("sexminer.jl")
 
 end
