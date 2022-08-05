@@ -159,16 +159,18 @@ The data and graph mining software has been developed in Julia. The documentatio
 
 1. Basic data mining plots.
 
-`Miner.one_conference_data_mining("concur", true, 10)`
+`Main.Miner.one_conference_data_mining("concur", true, 10)`
 
 2. Sex analysis.
 
-`Miner.one_conference_sex_mining("concur", true)`
+`Main.Miner.one_conference_sex_mining("concur", true)`
+
+In order to execute this command, you need the two files `first_name_genderize.txt` and `full_name_manual.txt`, whose content and format is explained in the documentation and that have to be located in the `names` directory. If you want the two files used for the analysis of the CONCUR conference, send me a message.
 
 3. Title analysis.
 
-`Miner.one_conference_title_mining("concur", 5, 10)`
+`Main.Miner.one_conference_title_mining("concur", 5, 10)`
 
 4. Graph mining
 
-`Miner.one_conference_graph_mining("concur", 10, [143, 271])`
+`Main.Miner.one_conference_graph_mining("concur", 10, [143, 271])`
