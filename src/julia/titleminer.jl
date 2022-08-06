@@ -104,6 +104,7 @@ Invoke all the functions to produce all the plots relative to the conference who
 """
 function one_conference_title_mining(conf_name::String, step::Int64, k::Int64)
     mkpath(path_to_files * "images/" * conf_name)
+    get_all_paper_titles(conf_name)
     word_cloud(conf_name)
     ngram_evolution_plot(conf_name, step, k)
 end
