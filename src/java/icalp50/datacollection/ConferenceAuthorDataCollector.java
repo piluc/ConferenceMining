@@ -23,14 +23,14 @@ public class ConferenceAuthorDataCollector {
 
 	/**
 	 * Add titles of specific conference edition to paper titles file (it ignores
-	 * prefaces).
+	 * prefaces when possible).
 	 * 
 	 * @param conf          : conference acronym
 	 * @param toc           : table of contents of the conference edition
 	 * @param year          : year of the conference dition
 	 * @param year_paper_pw : writer of the file with all conference paper titles
 	 */
-	public static void save_titles(String conf, TableOfContents toc, int year, PrintWriter year_paper_pw) {
+	public static void save_titles(String conf, TableOfContents toc, PrintWriter year_paper_pw) {
 		try {
 			for (Publication publ : toc.getPublications()) {
 				if (!publ.getTag().equals("proceedings")) {
@@ -49,10 +49,10 @@ public class ConferenceAuthorDataCollector {
 	}
 
 	/**
-	 * For each paper in the conference edition (prefaces are ignored), collect the
-	 * paper titles (only journal and conference papers and only titles with at most
-	 * three commas) and the conferences of the authors of the paper (if not already
-	 * done) and add them in the two corresponding files.
+	 * For each paper in the conference edition (prefaces are ignored when
+	 * possible), collect the paper titles (only journal and conference papers and
+	 * only titles with at most three commas) and the conferences of the authors of
+	 * the paper (if not already done) and add them in the two corresponding files.
 	 * 
 	 * @param toc        : table of contents of the conference edition
 	 * @param author_id  : dictionary associating author name to integer id
@@ -116,8 +116,8 @@ public class ConferenceAuthorDataCollector {
 	 * with all conferences of each conference author, and the file with the mapping
 	 * between integer id and DBLP key. The first argument is the conference
 	 * acronym, while the other arguments are grouped into blocks of six values,
-	 * that is, the type, the DBLP directory, the acronym, the first year, the last
-	 * year, and the number of parts of each edition of the conference.
+	 * that is, the type, the DBLP directory, the acronym, the first suffix, the
+	 * last suffix, and the number of parts of each edition of the conference.
 	 * 
 	 * @param dblp : the Java interface to the DBLP database
 	 * @param args : list of arguments for the specific conference
@@ -138,31 +138,39 @@ public class ConferenceAuthorDataCollector {
 				String conf_type = args[1 + num_arguments_conf * c];
 				String conf_dir = args[2 + num_arguments_conf * c];
 				String conf_syn = args[3 + num_arguments_conf * c];
-				int first_year = Integer.parseInt(args[4 + num_arguments_conf * c]);
-				int last_year = Integer.parseInt(args[5 + num_arguments_conf * c]);
+				int first_suffix = Integer.parseInt(args[4 + num_arguments_conf * c]);
+				int last_suffix = Integer.parseInt(args[5 + num_arguments_conf * c]);
 				int num_parts = Integer.parseInt(args[6 + num_arguments_conf * c]);
-				for (int year = first_year; year <= last_year; year++) {
-					int expanded_year = year < 100 ? (1900 + year) : year;
-					PrintWriter year_paper_pw = new PrintWriter(
-							"./conferences/" + conf + "/papers/paper_titles_" + expanded_year + ".txt");
+				for (int suffix = first_suffix; suffix <= last_suffix; suffix++) {
 					if (num_parts == 1) {
 						TableOfContents toc = dblp
-								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + year + ".bht");
+								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffix + ".bht");
 						if (toc != null) {
-							save_titles(conf, toc, year, year_paper_pw);
+							int real_year = ((Publication) (toc.getPublications().toArray()[0])).getYear();
+							PrintWriter year_paper_pw = new PrintWriter(
+									"./conferences/" + conf + "/papers/paper_titles_" + real_year + ".txt");
+							save_titles(conf, toc, year_paper_pw);
 							current_id = analyse_toc(toc, author_id, id_key, current_id, paper_pw, conf_pw);
+							year_paper_pw.close();
 						}
 					} else {
-						for (int p = 1; p <= num_parts; p++) {
-							TableOfContents toc = dblp.getToc(
-									"db/" + conf_type + "/" + conf_dir + "/" + conf_syn + year + "-" + p + ".bht");
-							if (toc != null) {
-								save_titles(conf, toc, year, year_paper_pw);
-								current_id = analyse_toc(toc, author_id, id_key, current_id, paper_pw, conf_pw);
+						TableOfContents toc = dblp
+								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffix + "-1.bht");
+						if (toc != null) {
+							int real_year = ((Publication) (toc.getPublications().toArray()[0])).getYear();
+							PrintWriter year_paper_pw = new PrintWriter(
+									"./conferences/" + conf + "/papers/paper_titles_" + real_year + ".txt");
+							for (int p = 1; p <= num_parts; p++) {
+								toc = dblp.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffix + "-" + p
+										+ ".bht");
+								if (toc != null) {
+									save_titles(conf, toc, year_paper_pw);
+									current_id = analyse_toc(toc, author_id, id_key, current_id, paper_pw, conf_pw);
+								}
 							}
+							year_paper_pw.close();
 						}
 					}
-					year_paper_pw.close();
 				}
 			}
 			paper_pw.close();

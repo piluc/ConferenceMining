@@ -97,9 +97,8 @@ public class ConferenceTemporalAdjacencyMatrixCreator {
 														containsException = true;
 													}
 												}
-												if (pub.getTag().equals("inproceedings")
-														&& url.toUpperCase().contains(
-																dir[c].toUpperCase() + "/" + conf[c].toUpperCase())
+												if (url.toUpperCase()
+														.contains(dir[c].toUpperCase() + "/" + conf[c].toUpperCase())
 														&& !url.toUpperCase()
 																.contains(dir[c].toUpperCase() + "/"
 																		+ (conf[c] + "w").toUpperCase())
@@ -125,9 +124,7 @@ public class ConferenceTemporalAdjacencyMatrixCreator {
 										containsException = true;
 									}
 								}
-								if (pub.getTag().equals("inproceedings")
-										&& url.toUpperCase()
-												.contains(dir[c].toUpperCase() + "/" + conf[c].toUpperCase())
+								if (url.toUpperCase().contains(dir[c].toUpperCase() + "/" + conf[c].toUpperCase())
 										&& !url.toUpperCase()
 												.contains(dir[c].toUpperCase() + "/" + (conf[c] + "w").toUpperCase())
 										&& !url.toUpperCase().contains(
