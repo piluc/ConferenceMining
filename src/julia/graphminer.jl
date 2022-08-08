@@ -169,7 +169,7 @@ end
 """
    `one_conference_graph_mining(conf_name::String, k::Int64, author::Vector{Int64})`
 
-Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The argument `k` is used for 
+Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The value of `k` is used for the computation of the top-k authors, while the vector `author` specifies the indices of the authors whose temporal harmonic closeness has to be plot.
 """
 function one_conference_graph_mining(conf_name::String, k::Int64, author::Vector{Int64})
     mkpath(path_to_files * "images/" * conf_name)

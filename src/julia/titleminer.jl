@@ -98,9 +98,9 @@ function ngram_evolution_plot(conf_name::String, y_step::Int64, first_year::Int6
 end
 
 """
-   `one_conference_title_mining(conf_name::String, downloaded::Bool)`
+   `one_conference_title_mining(conf_name::String, step::Int64, k::Int64)`
 
-Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The Boolean flag specifies whether the conferences, which are downloaded by default by running the `ccdm.jar` Java file without arguments, have been downloaded (in that case their directories should be in the same directory of the analyzed conference directory). If this flag is `true`, then the plot the missing sex assignments is also produced.
+Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The values of `step` and `k` are used for the computation of the top-k words and the plot of their evolution.
 """
 function one_conference_title_mining(conf_name::String, step::Int64, k::Int64)
     mkpath(path_to_files * "images/" * conf_name)
