@@ -22,43 +22,39 @@ The data collection software has been developed in Java, mostly because this all
 
 ## Using the `ccdm.jar` file<a name="ccdm.jar"></a>
 
-By default the code collects the data of the following eighteen theoretical computer science conferences (up to the 2021 edition).
+By default the code collects the data of the following sixteen theoretical computer science conferences (up to the 2021 edition).
 
 1.  CAV: *International Conference on Computer Aided Verification*.
 
-2.  CONCUR: *International Conference on Concurrency Theory*.
+2.  CRYPTO: *Annual International Cryptology Conference*.
 
-3.  CRYPTO: *Annual International Cryptology Conference*.
+3.  CSL: *Annual Conference for Computer Science Logic*.
 
-4.  CSL: *Annual Conference for Computer Science Logic*.
+4.  DISC: *International Symposium on Distributed Computing*.
 
-5.  DISC: *International Symposium on Distributed Computing*.
+5.  ESA: *European Symposium on Algorithms*.
 
-6.  ESA: *European Symposium on Algorithms*.
+6.  ESOP: *European Symposium on Programming*.
 
-7.  ESOP: *European Symposium on Programming*.
+7.  EUROCRYPT: *International Conference on the Theory and Application of Cryptographic Techniques*.
 
-8.  EUROCRYPT: *International Conference on the Theory and Application of Cryptographic Techniques*.
+8.  FOCS: *IEEE Annual Symposium on Foundations of Computer Science*.
 
-9.  FOCS: *IEEE Annual Symposium on Foundations of Computer Science*.
+9. ICALP: *International Colloquium on Automata, Languages and Programming*.
 
-10. ICALP: *International Colloquium on Automata, Languages and Programming*.
+10. LICS: *ACM/IEEE Symposium on Logic in Computer Science*.
 
-11. LICS: *ACM/IEEE Symposium on Logic in Computer Science*.
+11. PODC: *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*.
 
-12. MFCS: *International Symposium on Mathematical Foundations of Computer Science*.
+12. POPL: *ACM-SIGACT Symposium on Principles of Programming Languages*.
 
-13. PODC: *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*.
+13. SODA: *ACM-SIAM Symposium on Discrete Algorithms*.
 
-14. POPL: *ACM-SIGACT Symposium on Principles of Programming Languages*.
+14. STACS: *Symposium on Theoretical Aspects of Computer Science*.
 
-15. SODA: *ACM-SIAM Symposium on Discrete Algorithms*.
+15. STOC: *Symposium on the Theory of Computing*.
 
-16. STACS: *Symposium on Theoretical Aspects of Computer Science*.
-
-17. STOC: *Symposium on the Theory of Computing*.
-
-18. TACAS: *International Conference on Tools and Algorithms for Construction and Analysis of Systems*.
+16. TACAS: *International Conference on Tools and Algorithms for Construction and Analysis of Systems*.
 
 To this aim, once the files `dblp.xml` and `dblp.dtd` (which are available at the DBLP web site) have been downloaded and saved in
 directory `data`, it is sufficient to execute the following command:
@@ -77,7 +73,7 @@ Note that the execution of the above two commands may require a few minutes (mos
 
 ### Class `ConferenceAuthorDataCollector.java`<a name="ConferenceAuthorDataCollector"></a>
 
-The input of the `main` method of this class is the global conference acronym followed by a sequence of groups of six arguments, each specifying the type, the DBLP directory, the acronym, the first year, the last year, and the number of parts of each edition of the considered conference. Indeed, the typical address of the table of contents of the edition of a conference starts with the prefix `https://dblp.org/db/`, followed by the type of the conference publication. For example, the *ACM-SIGACT Symposium on Principles of Programming Languages* has been published as conference proceedings until the 2017 edition. Successively, it has been published as a journal (in particular, the *Proceedings of the ACM on Programming Languages* journal). Hence, until 2017 the type of this conference has been `conf`, while afterwards it has become `journals`. The address of the table of contents continues with the name of the DBLP directory containing the table of contents of the conference. This directory can change from one year to the other, mostly because of the joint editions with other conferences. For example, the 2014 edition of the *ACM/IEEE Symposium on Logic in Computer Science* has been a joint edition with the *Annual Conference for Computer Science Logic*. For this reason, the address of the table of contents of the former conference continues with `csl`, instead of with `lics`, as in the other editions. The address continues with the acronym of the conference concatenated with the year of the edition and, if multiple parts are present, the part number (separated by a dash). First note that the acronym of the conference can change: for example, the *International Symposium on Distributed Computing* was originally named *Workshop on Distributed Algorithms*. For this reason, its acronym has been `wdag` until the 1997 edition, and it became `disc` afterwards. Secondly, note that in many cases the year is indicated by the last two digits until the 1999 edition of a conference, and by the four digits afterwards (there are also cases in which these two different representations alternate in the period before 1999). Finally, the proceedings of some editions of a conference are split into two or more parts (for instance, this is true in the case of the *International Colloquium on Automata, Languages and Programming* whenever the edition was split into three tracks. The simplest list of arguments that have to be passed to this class is, for example, the one to gather the data concerning the *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*. In this case, the list is simply the following one:
+The input of the `main` method of this class is the global conference acronym followed by a sequence of groups of six arguments, each specifying the type, the DBLP directory, the acronym, the first suffix, the last suffix, and the number of parts of each edition of the considered conference. Indeed, the typical address of the table of contents of the edition of a conference starts with the prefix `https://dblp.org/db/`, followed by the type of the conference publication. For example, the *ACM-SIGACT Symposium on Principles of Programming Languages* has been published as conference proceedings until the 2017 edition. Successively, it has been published as a journal (in particular, the *Proceedings of the ACM on Programming Languages* journal). Hence, until 2017 the type of this conference has been `conf`, while afterwards it has become `journals`. The address of the table of contents continues with the name of the DBLP directory containing the table of contents of the conference. This directory can change from one year to the other, mostly because of the joint editions with other conferences. For example, the 2014 edition of the *ACM/IEEE Symposium on Logic in Computer Science* has been a joint edition with the *Annual Conference for Computer Science Logic*. For this reason, the address of the table of contents of the former conference continues with `csl`, instead of with `lics`, as in the other editions. The address continues with the acronym of the conference concatenated with the suffix (usually the year) of the edition and, if multiple parts are present, the part number (separated by a dash). First note that the acronym of the conference can change: for example, the *International Symposium on Distributed Computing* was originally named *Workshop on Distributed Algorithms*. For this reason, its acronym has been `wdag` until the 1997 edition, and it became `disc` afterwards. Secondly, note that in many cases the suffix is indicated by the last two digits of the year until the 1999 edition of a conference, and by the four digits afterwards (there are also cases in which these two different representations alternate in the period before 1999). Finally, the proceedings of some editions of a conference are split into two or more parts (for instance, this is true in the case of the *International Colloquium on Automata, Languages and Programming* whenever the edition was split into three tracks. The simplest list of arguments that have to be passed to this class is, for example, the one to gather the data concerning the *ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing*. In this case, the list is simply the following one:
 
 `podc conf podc podc 82 99 1 conf podc podc 2000 2021 1`
 
