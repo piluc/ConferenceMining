@@ -61,7 +61,7 @@ directory `data`, it is sufficient to execute the following command:
 
 `java -jar ccdm.jar`
 
-In order to collect the data for another conference, then the necessary arguments have to be passed to the Java executable archive. For example, in order to collect the data of the conference *Fun with Algorithms*, we can execute the following command:
+In order to collect the data for another conference, then the necessary arguments have to be passed to the Java executable archive. For example, in order to collect the data of the conference *Fun with Algorithms*, we can execute the following command (other example of program arguments are included in the `args` folder):
 
 `java -jar ccdm.jar 1 fun conf fun fun 2007 2021 1 fun fun 2007 2021 ne`
 
