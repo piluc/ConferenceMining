@@ -1,6 +1,6 @@
 # Introduction
 
-This repository includes and explains the code used for the comparative analysis presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference.
+This repository includes and explains the code used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference.
 
 ## Table of contents
 
@@ -22,7 +22,7 @@ The data collection software has been developed in Java, mostly because this all
 
 ## Using the `ccdm.jar` file<a name="ccdm.jar"></a>
 
-By default the code collects the data of the following sixteen theoretical computer science conferences (up to the 2021 edition), which have been used for the comparative analysis presented at the exhibition on the history of ICALP in Paris, 2022.
+By default the code collects the data of the following sixteen theoretical computer science conferences (up to the 2021 edition), which have been used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022.
 
 1.  CAV: *International Conference on Computer Aided Verification*.
 
