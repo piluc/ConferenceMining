@@ -14,8 +14,6 @@ public class Main {
 			{ "cav", "conf", "cav", "cav", "1990", "1990", "1", "conf", "cav", "cav", "91", "91", "1", "conf", "cav",
 					"cav", "1992", "1992", "1", "conf", "cav", "cav", "93", "99", "1", "conf", "cav", "cav", "2000",
 					"2015", "1", "conf", "cav", "cav", "2015", "2015", "2", "conf", "cav", "cav", "2016", "2021", "2" },
-			{ "concur", "conf", "concur", "concur", "1984", "1984", "1", "conf", "concur", "concur", "1988", "2021",
-					"1" },
 			{ "crypto", "conf", "crypto", "crypto", "81", "99", "1", "conf", "crypto", "crypto", "2000", "2012", "1",
 					"conf", "crypto", "crypto", "2013", "2015", "2", "conf", "crypto", "crypto", "2016", "2020", "3",
 					"conf", "crypto", "crypto", "2021", "2021", "4" },
@@ -39,8 +37,6 @@ public class Main {
 					"icalp", "2008", "2015", "2", "conf", "icalp", "icalp", "2016", "2021", "1" },
 			{ "lics", "conf", "lics", "lics", "86", "99", "1", "conf", "lics", "lics", "2000", "2013", "1", "conf",
 					"csl", "csl", "2014", "2014", "1", "conf", "lics", "lics", "2015", "2021", "1" },
-			{ "mfcs", "conf", "mfcs", "mfcs", "73", "99", "1", "conf", "mfcs", "mfcs", "2000", "2013", "1", "conf",
-					"mfcs", "mfcs", "2014", "2015", "2", "conf", "mfcs", "mfcs", "2016", "2021", "1" },
 			{ "podc", "conf", "podc", "podc", "82", "99", "1", "conf", "podc", "podc", "2000", "2021", "1" },
 			{ "popl", "conf", "popl", "popl", "73", "99", "1", "conf", "popl", "popl", "2000", "2017", "1" },
 			{ "soda", "conf", "soda", "soda", "90", "99", "1", "conf", "soda", "soda", "2000", "2021", "1" },
@@ -50,21 +46,19 @@ public class Main {
 					"tacas", "tacas", "2017", "2018", "2", "conf", "tacas", "tacas", "2019", "2019", "3", "conf",
 					"tacas", "tacas", "2020", "2021", "2" } };
 	public static String[][] default_arguments_second_phase = { { "cav", "cav", "cav", "1990", "2021", "ne" },
-			{ "concur", "concur", "concur", "1984", "2021", "ne" },
-			{ "crypto", "crypto", "crypto", "1981", "2021", "ne" }, { "csl", "csl", "csl", "1987", "2021", "ne" },
+			{ "crypto", "crypto", "crypto", "1981", "2021", "ne" }, { "csl", "csl", "csl", "1987", "2021", "journals/csl" },
 			{ "disc", "wdag", "wdag", "1987", "1997", "wdag", "disc", "1998", "2021", "ne" },
 			{ "esa", "esa", "esa", "1993", "2021", "ne" }, { "esop", "esop", "esop", "1986", "2021", "ne" },
 			{ "eurocrypt", "eurocrypt", "eurocrypt", "1982", "2021", "ne" },
 			{ "focs", "focs", "focs", "1960", "2021", "ne" }, { "icalp", "icalp", "icalp", "1972", "2021", "ne" },
 			{ "lics", "lics", "lics", "1986", "2013", "csl", "csl", "2014", "2014", "lics", "lics", "2015", "2021",
-					"ne" },
-			{ "mfcs", "mfcs", "mfcs", "1972", "2021", "mfcs/mfcs98gs" },
+					"journals/csl" },
 			{ "podc", "podc", "podc", "1982", "2021", "ne" }, { "popl", "popl", "popl", "1973", "2017", "ne" },
 			{ "soda", "soda", "soda", "1990", "2021", "ne" }, { "stacs", "stacs", "stacs", "1984", "2021", "ne" },
 			{ "stoc", "stoc", "stoc", "1969", "2021", "ne" }, { "tacas", "tacas", "tacas", "1995", "2021", "ne" } };
-	public static String[] default_conferences = { "cav", "concur", "crypto", "csl", "disc", "esa", "esop", "eurocrypt",
-			"focs", "icalp", "lics", "mfcs", "podc", "popl", "soda", "stacs", "stoc", "tacas" };
-	public static int num_default_conf = 18;
+	public static String[] default_conferences = { "cav", "crypto", "csl", "disc", "esa", "esop", "eurocrypt",
+			"focs", "icalp", "lics", "podc", "popl", "soda", "stacs", "stoc", "tacas" };
+	public static int num_default_conf = 16;
 	public static int first_year = 1900;
 	public static int last_year = 2021;
 
