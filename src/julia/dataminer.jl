@@ -253,7 +253,7 @@ function one_conference_data_mining(conf_name::String, downloaded::Bool, co_auth
     mkpath(path_to_files * "images/" * conf_name)
     paper_year_plot([conf_name], 1, conf_name * "/paper_year")
     paper_growth_rate_plot([conf_name], 1, conf_name * "/paper_growth_rate_year")
-    author_year_plot([conf_name], 1, conf_name * "/auhtor_year")
+    author_year_plot([conf_name], 1, conf_name * "/author_year")
     author_growth_rate_plot([conf_name], 1, conf_name * "/author_growth_rate_year")
     perc_new_author_year_plot([conf_name], 1, conf_name * "/perc_new_author_year")
     coauthorship_plot(conf_name, co_author_step, conf_name * "/co_authorship_" * string(co_author_step) * "_years")
