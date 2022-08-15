@@ -1,6 +1,6 @@
 # Introduction
 
-This repository includes and explains the code used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022, and for the [analysis of the CONCUR conference](http://www.pilucrescenzi.it/miner/examples/concur/concur.html).
+This repository includes and explains the code used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference and the [analysis of the LAGOS conference](http://www.pilucrescenzi.it/miner/examples/lagos/lagos.html).
 
 ## Table of contents
 
