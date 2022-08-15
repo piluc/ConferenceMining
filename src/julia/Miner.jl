@@ -70,5 +70,6 @@ include("titleminerutils.jl")
 include("titleminer.jl")
 include("graphminerutils.jl")
 include("graphminer.jl")
+include("html.jl")
 
 end

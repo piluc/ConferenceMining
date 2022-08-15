@@ -1,9 +1,9 @@
 """
-   `statistics(conf::Array{String})`
+   `statistics(conf::Array{String})::Tuple{Int64, Int64, Float64, Float64}`
 
-Print the number of nodes, the number of edges, the density, and the realtive size of the largest connected component of the static graph, for each conference in `conf`.
+Return the number of nodes, the number of edges, the density, and the realtive size of the largest connected component of the static graph, for each conference in `conf`.
 """
-function statistics(conf::Array{String})
+function statistics(conf::Array{String})::Tuple{Int64,Int64,Float64,Float64}
     for conf_name in conf
         n::Int64 = number_authors(conf_name)
         fn::String = path_to_files * "conferences/" * conf_name * "/" * "static_graph.txt"
@@ -12,7 +12,7 @@ function statistics(conf::Array{String})
         lcc_index::Int64 = argmax(length.(cc))
         lcc::Array{Int64} = cc[lcc_index]
         lcc_size::Int64 = length(lcc)
-        println(conf_name, " ", n, " ", ne(g), " ", Base._round_invstep((2 * ne(g)) / (n * (n - 1)), 1 / 0.0001, RoundNearest), " ", Base._round_invstep(lcc_size / n, 1 / 0.01, RoundNearest))
+        return n, ne(g), (2 * ne(g)) / (n * (n - 1)), lcc_size / n
     end
 end
 
@@ -153,27 +153,30 @@ function closeness_plot(conf_name::String, author::Array{Int64}, fo::String)
 end
 
 """
-   `top_k_closeness(conf_name::String, k::Int64, verbose::Bool)`
+   `top_k_closeness(conf_name::String, k::Int64, verbose::Bool)::Tuple{Array{Int64}, Vector{String}}`
 
 Print the the top-k authors of the conference `conf_name` with respect to the temporal closeness.
 """
-function top_k_closeness(conf_name::String, k::Int64, verbose::Bool)
+function top_k_closeness(conf_name::String, k::Int64, verbose::Bool)::Tuple{Array{Int64},Vector{String}}
     id_name::Dict{Int64,String}, c::Array{Float64} = closeness(conf_name, verbose)
     top_k_indices::Array{Int64} = sortperm(c, rev=true)[1:k]
+    top_k_names::Vector{String} = []
     for a in 1:k
-        println(id_name[top_k_indices[a]])
+        push!(top_k_names, id_name[top_k_indices[a]])
     end
+    return top_k_indices, top_k_names
 end
 
 
 """
-   `one_conference_graph_mining(conf_name::String, k::Int64, author::Vector{Int64})`
+   `one_conference_graph_mining(conf_name::String, k::Int64)`
 
-Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The value of `k` is used for the computation of the top-k authors, while the vector `author` specifies the indices of the authors whose temporal harmonic closeness has to be plot.
+Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The value of `k` is used for the computation of the top-k authors. The temporal harmonic closeness plot is produced for the top two authors.
 """
-function one_conference_graph_mining(conf_name::String, k::Int64, author::Vector{Int64})
+function one_conference_graph_mining(conf_name::String, k::Int64)
     mkpath(path_to_files * "images/" * conf_name)
-    statistics([conf_name])
+    nn, ne, density, lcc_perc = statistics([conf_name])
+    println(conf_name, " ", nn, " ", ne, " ", Base._round_invstep(density, 1 / 0.0001, RoundNearest), " ", Base._round_invstep(lcc_perc, 1 / 0.01, RoundNearest))
     densification_plot([conf_name], 1, conf_name * "/densification")
     diameter_plot([conf_name], 1, conf_name * "/diameter")
     degree_separation_plot([conf_name], 1, conf_name * "/degrees_separation")
@@ -184,6 +187,7 @@ function one_conference_graph_mining(conf_name::String, k::Int64, author::Vector
     println(d[conf_name][2])
     println("Betweeness")
     println(d[conf_name][3])
-    closeness_plot(conf_name, author, "/temporal_harmonic_closeness")
-    top_k_closeness(conf_name, k, false)
+    tki, tkn = top_k_closeness(conf_name, k, false)
+    closeness_plot(conf_name, tki[1:2], "/temporal_harmonic_closeness")
+    println(tkn)
 end

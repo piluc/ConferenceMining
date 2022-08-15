@@ -260,11 +260,11 @@ function one_conference_data_mining(conf_name::String, downloaded::Bool, co_auth
     if (downloaded)
         conf::Vector{String} = vec(downloaded_conf)
         conf_index = findfirst(x -> x == conf_name, conf)
-        if (conf_index == nothing)
+        if (conf_index === nothing)
             pushfirst!(conf, conf_name)
             conf_index = 1
         end
-        new_author_mean_bar_chart(pushfirst!(vec(downloaded_conf), conf_name), conf_index, conf_name * "/new_author_perc_bar")
-        similarity_indices_plot(vec(downloaded_conf), [conf_name], conf_name * "/similarity_values")
+        new_author_mean_bar_chart(conf, conf_index, conf_name * "/new_author_perc_bar")
+        similarity_indices_plot(conf, [conf_name], conf_name * "/similarity_values")
     end
 end

@@ -41,6 +41,7 @@ function missing_author_name(conf_name::String, verbose::Bool)
             elseif (!in(split_name[1], keys(first_name_sex)))
                 if (verbose)
                     println("ERROR: " * split_line[4])
+                    # println(split_name[1])
                 end
                 errors = errors + 1
             else
