@@ -1,6 +1,6 @@
 # Introduction
 
-This repository includes and explains the code used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022, and for the analysis of the CONCUR conference.
+This repository includes and explains the code used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022, and for the [analysis of the CONCUR conference](http://www.pilucrescenzi.it/miner/examples/concur/concur.html).
 
 ## Table of contents
 
@@ -170,3 +170,7 @@ The data and graph mining software has been developed in Julia. The documentatio
 4. Graph mining
 
     `Main.Miner.one_conference_graph_mining("concur", 10, [143, 271])`
+    
+5. Web page generation (see this [analysis of the CONCUR conference](http://www.pilucrescenzi.it/miner/examples/concur/concur.html))
+
+    `Main.Miner.conf_web_page("concur", 5, dc, 5, 10, 10, 10, 2)`
