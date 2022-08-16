@@ -21,7 +21,7 @@ function data_mining_html(io::IOStream, conf_name::String, co_author_step::Int64
     cp(path_to_files * "images/" * conf_name * "/co_authorship_period.html", path_to_files * "html/" * conf_name * "/co_authorship_period.html", force=true)
     perc_new_author_year_plot([conf_name], 1, conf_name * "/perc_new_author_year")
     cp(path_to_files * "images/" * conf_name * "/perc_new_author_year.html", path_to_files * "html/" * conf_name * "/perc_new_author_year.html", force=true)
-    similarity_indices_plot(conf_array, [conf_name], conf_name * "/similarity_values")
+    similarity_indices_plot(filter(c -> c != conf_name, conf_array), [conf_name], conf_name * "/similarity_values")
     conf_index = findfirst(x -> x == conf_name, conf_array)
     if (conf_index === nothing)
         new_author_mean_bar_chart([[conf_name]; conf_array], 1, conf_name * "/new_author_perc_bar")

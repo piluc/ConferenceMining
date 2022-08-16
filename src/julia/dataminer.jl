@@ -259,12 +259,12 @@ function one_conference_data_mining(conf_name::String, downloaded::Bool, co_auth
     coauthorship_plot(conf_name, co_author_step, conf_name * "/co_authorship_" * string(co_author_step) * "_years")
     if (downloaded)
         conf::Vector{String} = vec(downloaded_conf)
+        similarity_indices_plot(filter(c -> c != conf_name, conf), [conf_name], conf_name * "/similarity_values")
         conf_index = findfirst(x -> x == conf_name, conf)
         if (conf_index === nothing)
-            pushfirst!(conf, conf_name)
-            conf_index = 1
+            new_author_mean_bar_chart([[conf_name]; conf], 1, conf_name * "/new_author_perc_bar")
+        else
+            new_author_mean_bar_chart(conf, conf_index, conf_name * "/new_author_perc_bar")
         end
-        new_author_mean_bar_chart(conf, conf_index, conf_name * "/new_author_perc_bar")
-        similarity_indices_plot(conf, [conf_name], conf_name * "/similarity_values")
     end
 end
