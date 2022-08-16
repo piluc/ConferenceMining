@@ -167,7 +167,7 @@ The data and graph mining software has been developed in Julia. The documentatio
 
 3. Title analysis.
 
-    `Main.Miner.one_conference_title_mining("concur", 5, 10)`
+    `Main.Miner.one_conference_title_mining("concur", 5, 10, [])`
 
 4. Graph mining
 
@@ -175,4 +175,4 @@ The data and graph mining software has been developed in Julia. The documentatio
     
 5. Web page generation (see this [analysis of the CONCUR conference](http://www.pilucrescenzi.it/miner/examples/concur/concur.html))
 
-    `Main.Miner.conf_web_page("concur", 5, dc, 5, 10, 10, 10, 2)`
+    `Main.Miner.conf_web_page("concur", 5, dc, 5, 10, [], 10, 10, 2)`
