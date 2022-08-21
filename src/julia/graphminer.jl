@@ -3,7 +3,8 @@
 
 Return the number of nodes, the number of edges, the density, and the realtive size of the largest connected component of the static graph, for each conference in `conf`.
 """
-function statistics(conf::Array{String})::Tuple{Int64,Int64,Float64,Float64}
+function statistics(conf::Array{String})::Vector{Tuple{Int64,Int64,Float64,Float64}}
+    stats::Vector{Tuple{Int64,Int64,Float64,Float64}} = []
     for conf_name in conf
         n::Int64 = number_authors(conf_name)
         fn::String = path_to_files * "conferences/" * conf_name * "/" * "static_graph.txt"
@@ -12,8 +13,9 @@ function statistics(conf::Array{String})::Tuple{Int64,Int64,Float64,Float64}
         lcc_index::Int64 = argmax(length.(cc))
         lcc::Array{Int64} = cc[lcc_index]
         lcc_size::Int64 = length(lcc)
-        return n, ne(g), (2 * ne(g)) / (n * (n - 1)), lcc_size / n
+        push!(stats, (n, ne(g), (2 * ne(g)) / (n * (n - 1)), lcc_size / n))
     end
+    return stats
 end
 
 """
@@ -175,7 +177,7 @@ Invoke all the functions to produce all the plots relative to the conference who
 """
 function one_conference_graph_mining(conf_name::String, k::Int64)
     mkpath(path_to_files * "images/" * conf_name)
-    nn, ne, density, lcc_perc = statistics([conf_name])
+    nn, ne, density, lcc_perc = statistics([conf_name])[1]
     println(conf_name, " ", nn, " ", ne, " ", Base._round_invstep(density, 1 / 0.0001, RoundNearest), " ", Base._round_invstep(lcc_perc, 1 / 0.01, RoundNearest))
     densification_plot([conf_name], 1, conf_name * "/densification")
     diameter_plot([conf_name], 1, conf_name * "/diameter")

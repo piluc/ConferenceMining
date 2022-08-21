@@ -41,11 +41,11 @@ function sex_analysis_html(io::IOStream, conf_name::String)
     write(io, "<a id=\"sex\"></a><h2>Sex analysis</h2>\n<p>The sex of " * uppercase(conf_name) * " authors has been determined mostly by querying the web service available at <a href=\"https://genderize.io/\"><tt>genderize.io</tt></a> (which is based on first names only), and partly by manually searching the authors on the web. The following picture shows the evolution of the percentages of male and female authors per year (the two percentages are computed with respect to the number of authors for which the sex has been assigned). The percentage of authors with no sex assigned is also shown (with respect to the total number of authors).</p>\n<iframe title=\"Evolution of the percentage of male and female authors\" src=\"perc_sex.html\" width=\"600\" height=\"600\"></iframe>\n")
 end
 
-function topic_analysis_html(io::IOStream, conf_name::String, word_step::Int64, word_k::Int64)
+function topic_analysis_html(io::IOStream, conf_name::String, word_step::Int64, word_k::Int64, forbidden::Vector{String})
     get_all_paper_titles(conf_name)
     word_cloud(conf_name)
     cp(path_to_files * "images/" * conf_name * "/wordcloud.svg", path_to_files * "html/" * conf_name * "/wordcloud.svg", force=true)
-    ngram_evolution_plot(conf_name, word_step, word_k)
+    ngram_evolution_plot(conf_name, word_step, word_k, forbidden)
     cp(path_to_files * "images/" * conf_name * "/first_" * string(word_k) * "_word_evolution_step_" * string(word_step) * ".html", path_to_files * "html/" * conf_name * "/first_word_evolution_period.html", force=true)
     # 
     write(io, "<a id=\"topic\"></a><h2>Topic analysis</h2>\n<p>The following pictures shows the word cloud corresponding to the words contained in the titles of " * uppercase(conf_name) * " papers.</p>\n<img src=\"wordcloud.svg\" alt=\"Cloud of words in titles\" width=\"800\" height=\"600\">\n<p>Of all the words contained in the titles of " * uppercase(conf_name) * " papers in a certain time interval, the following picture shows what fraction of them are one of the most frequent 10 words.</p>\n<iframe title=\"Evolution of top word frequencies\" src=\"first_word_evolution_period.html\" width=\"800\" height=\"600\"></iframe>\n")
@@ -96,11 +96,11 @@ function temporal_graph_html(io::IOStream, conf_name::String, closeness_k::Int64
 end
 
 """
-   `conf_web_page(conf_name::String, co_author_step::Int64, conf_array::Vector{String}, word_step::Int64, word_k::Int64, centrality_k::Int64, closeness_k::Int64, harmonic_k::Int64)`
+   `conf_web_page(conf_name::String, co_author_step::Int64, conf_array::Vector{String}, word_step::Int64, word_k::Int64, forbidden::Vector{String}, centrality_k::Int64, closeness_k::Int64, harmonic_k::Int64)`
 
-Generate the default HTML page with several data- and graph-mining results. The value of `co_author_step` is used for the computation of the co-authorship size distribution. The vector `conf_array` includes the acronyms of the conferences with which a comparison has to be done. The values of `word_step` and `word_k` are used for the computation of the top words and the plot of their evolution. The values of `centrality_k` and of `closeness_k` are used for the computation of the top authors. The temporal harmonic closeness plot is produced for the top `harmonic_k` authors.
+Generate the default HTML page with several data- and graph-mining results. The value of `co_author_step` is used for the computation of the co-authorship size distribution. The vector `conf_array` includes the acronyms of the conferences with which a comparison has to be done. The values of `word_step` and `word_k` are used for the computation of the top words and the plot of their evolution (the words in `forbidden` are discarded). The values of `centrality_k` and of `closeness_k` are used for the computation of the top authors. The temporal harmonic closeness plot is produced for the top `harmonic_k` authors.
 """
-function conf_web_page(conf_name::String, co_author_step::Int64, conf_array::Vector{String}, word_step::Int64, word_k::Int64, centrality_k::Int64, closeness_k::Int64, harmonic_k::Int64)
+function conf_web_page(conf_name::String, co_author_step::Int64, conf_array::Vector{String}, word_step::Int64, word_k::Int64, forbidden::Vector{String}, centrality_k::Int64, closeness_k::Int64, harmonic_k::Int64)
     mkpath(path_to_files * "html/" * conf_name)
     mkpath(path_to_files * "images/" * conf_name)
     cp(path_to_files * "html/cmstyle.css", path_to_files * "html/" * conf_name * "/cmstyle.css", force=true)
@@ -109,7 +109,7 @@ function conf_web_page(conf_name::String, co_author_step::Int64, conf_array::Vec
     start_html(io, conf_name)
     data_mining_html(io, conf_name, co_author_step, conf_array)
     sex_analysis_html(io, conf_name)
-    topic_analysis_html(io, conf_name, word_step, word_k)
+    topic_analysis_html(io, conf_name, word_step, word_k, forbidden)
     graph_mining_html(io, conf_name)
     centralities_html(io, conf_name, centrality_k)
     temporal_graph_html(io, conf_name, closeness_k, harmonic_k)

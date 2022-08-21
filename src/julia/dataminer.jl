@@ -120,7 +120,10 @@ Generate the bar chart in which, for each conference whose global acronym is con
 function new_author_mean_bar_chart(conf::Array{String}, emph::Int64, output_fn::String)::String
     nam::Array{Float64} = new_authors_mean(conf)
     namp::Array{Int64} = sortperm(nam)
-    emph_pos::Int64 = findfirst(x -> x == emph, namp)
+    emph_pos::Int64 = 0
+    if (emph > 0 && emph <= length(nam))
+        emph_pos = findfirst(x -> x == emph, namp)
+    end
     layout = Layout(autosize=true, width=plot_width, height=plot_height, yaxis=attr(tickformat=".2%"), yaxis_title="Average percentage of new authors", xaxis_title="Conference")
     x_conf::Vector{String} = []
     y_nam::Vector{Float64} = []

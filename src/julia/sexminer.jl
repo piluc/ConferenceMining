@@ -69,7 +69,10 @@ function missing_sex_bar_chart(conf::Array{String}, emph::Int64, fo::String)::St
         pma[c] = (nc + ns) / na
     end
     pmap::Array{Int64} = sortperm(pma)
-    emph_pos::Int64 = findfirst(x -> x == emph, pmap)
+    emph_pos::Int64 = 0
+    if (emph > 0 && emph <= length(conf))
+        emph_pos = findfirst(x -> x == emph, pmap)
+    end
     layout = Layout(autosize=true, width=plot_width, height=plot_height, yaxis=attr(tickformat=".2%"), yaxis_title="Percentage of authors with no sex assigned", xaxis_title="Conference")
     x_conf::Vector{String} = []
     y_pma::Vector{Float64} = []

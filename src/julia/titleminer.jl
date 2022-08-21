@@ -30,21 +30,21 @@ function area_word_cloud(area::String)
 end
 
 """
-   `ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64)::String`
-   `ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, first_year::Int64, last_year::Int64)::String`
+   `ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, forbidden::Vector{String})::String`
+   `ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, first_year::Int64, last_year::Int64, forbidden::Vector{String})::String`
 
-Generate the plot showing, for each of the `k` most popular words its evolution, that is, of all the words contained in the titles of the conference papers in a certain interval, what percentage of them are the examined word. If the `first_year` and `last_year` argument are specified, then only the papers in the corresponding interval are considered.  
+Generate the plot showing, for each of the `k` most popular words its evolution, that is, of all the words contained in the titles of the conference papers in a certain interval, what percentage of them are the examined word. If the `first_year` and `last_year` argument are specified, then only the papers in the corresponding interval are considered. The words in `forbidden` are discarded.
 """
-function ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64)::String
+function ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, forbidden::Vector{String})::String
     first_year::Int64, last_year::Int64 = first_last_year(conf_name)
-    ngram_evolution_plot(conf_name, y_step, k, first_year, last_year)
+    ngram_evolution_plot(conf_name, y_step, k, first_year, last_year, forbidden)
 end
 
-function ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, first_year::Int64, last_year::Int64)::String
-    words_to_be_searched::Vector{String}, frequencies::Vector{Int64} = conf_word_frequencies(conf_name, k)
+function ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, first_year::Int64, last_year::Int64, forbidden::Vector{String})::String
+    words_to_be_searched::Vector{String}, frequencies::Vector{Int64} = conf_word_frequencies(conf_name, k, forbidden)
     first_word::String = words_to_be_searched[findmax(frequencies)[2]]
     sort!(words_to_be_searched)
-    ngram_number::Vector{Int64}, d::Dict{String,Vector{Int64}} = word_evolution(conf_name, y_step, k)
+    ngram_number::Vector{Int64}, d::Dict{String,Vector{Int64}} = word_evolution(conf_name, y_step, k, forbidden)
     layout = Layout(autosize=true, width=800, height=plot_height, yaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true), yaxis_title="Fraction", xaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, constrain="domain"), xaxis_title="Interval", legend=attr(x=1, xanchor="right", y=1.02, yanchor="bottom", orientation="h", title="Words"), hovermode="x unified")
     x_ni::Vector{String} = []
     for y in first_year:y_step:last_year
@@ -65,19 +65,19 @@ function ngram_evolution_plot(conf_name::String, y_step::Int64, k::Int64, first_
 end
 
 """
-   `ngram_evolution_plot(conf_name::String, y_step::Int64, words_to_be_searched::Vector{String})::String`
-   `ngram_evolution_plot(conf_name::String, y_step::Int64, first_year::Int64, last_year::Int64, words_to_be_searched::Vector{String})::String`
+   `ngram_evolution_plot(conf_name::String, y_step::Int64, words_to_be_searched::Vector{String}, forbidden::Vector{String})::String`
+   `ngram_evolution_plot(conf_name::String, y_step::Int64, first_year::Int64, last_year::Int64, words_to_be_searched::Vector{String}, forbidden::Vector{String})::String`
 
-Generate the plot showing, for each of the words to be searched, its evolution, that is, of all the words contained in the titles of the conference papers in a certain interval, what percentage of them are the examined word. If the `first_year` and `last_year` argument are specified, then only the papers in the corresponding interval are considered.
+Generate the plot showing, for each of the words to be searched, its evolution, that is, of all the words contained in the titles of the conference papers in a certain interval, what percentage of them are the examined word. If the `first_year` and `last_year` argument are specified, then only the papers in the corresponding interval are considered. The words in `forbidden` are discarded.
 """
-function ngram_evolution_plot(conf_name::String, y_step::Int64, words_to_be_searched::Vector{String})::String
+function ngram_evolution_plot(conf_name::String, y_step::Int64, words_to_be_searched::Vector{String}, forbidden::Vector{String})::String
     first_year::Int64, last_year::Int64 = first_last_year(conf_name)
-    ngram_evolution_plot(conf_name, y_step, first_year, last_year, words_to_be_searched)
+    ngram_evolution_plot(conf_name, y_step, first_year, last_year, words_to_be_searched, forbidden)
 end
 
-function ngram_evolution_plot(conf_name::String, y_step::Int64, first_year::Int64, last_year::Int64, words_to_be_searched::Vector{String})::String
+function ngram_evolution_plot(conf_name::String, y_step::Int64, first_year::Int64, last_year::Int64, words_to_be_searched::Vector{String}, forbidden::Vector{String})::String
     first_word::String = words_to_be_searched[1]
-    ngram_number::Vector{Int64}, d::Dict{String,Vector{Int64}} = word_evolution(conf_name, y_step, 0)
+    ngram_number::Vector{Int64}, d::Dict{String,Vector{Int64}} = word_evolution(conf_name, y_step, 0, forbidden)
     layout = Layout(autosize=true, width=800, height=plot_height, yaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true), yaxis_title="Fraction", xaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, constrain="domain"), xaxis_title="Interval", legend=attr(x=1, xanchor="right", y=1.02, yanchor="bottom", orientation="h", title="Words"), hovermode="x unified")
     x_ni::Vector{String} = []
     for y in first_year:y_step:last_year
@@ -98,13 +98,13 @@ function ngram_evolution_plot(conf_name::String, y_step::Int64, first_year::Int6
 end
 
 """
-   `one_conference_title_mining(conf_name::String, step::Int64, k::Int64)`
+   `one_conference_title_mining(conf_name::String, step::Int64, k::Int64, forbidden::Vector{String})`
 
-Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The values of `step` and `k` are used for the computation of the top-k words and the plot of their evolution.
+Invoke all the functions to produce all the plots relative to the conference whose acronym is `conf_name`. The values of `step` and `k` are used for the computation of the top-k words and the plot of their evolution (the words in `forbidden` are discarded).
 """
-function one_conference_title_mining(conf_name::String, step::Int64, k::Int64)
+function one_conference_title_mining(conf_name::String, step::Int64, k::Int64, forbidden::Vector{String})
     mkpath(path_to_files * "images/" * conf_name)
     get_all_paper_titles(conf_name)
     word_cloud(conf_name)
-    ngram_evolution_plot(conf_name, step, k)
+    ngram_evolution_plot(conf_name, step, k, forbidden)
 end
