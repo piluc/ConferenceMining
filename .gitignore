@@ -38,3 +38,6 @@ images/
 
 # Sex assignment files
 names/
+
+# Mac OS X file
+.DS_Store
