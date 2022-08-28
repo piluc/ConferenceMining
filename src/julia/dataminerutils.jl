@@ -8,6 +8,7 @@ Return the set of the DBLP keys of all authors who have published at least one p
 in the conference specified by the global acronym `conf_name`.
 """
 function author_key_set(conf_name::String)::Set{String}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/id_name_key.txt") "No file with id, names, and DBLP keys of the authors of the conference "
     fn::String = path_to_files * "conferences/" * conf_name * "/" * "id_name_key.txt"
     authors::Set{String} = Set{String}()
     for line in eachline(fn)
@@ -23,6 +24,7 @@ end
 Return the set of the full DBLP names of all authors who have published at least one paper in the conference specified by the global acronym `conf_name`.
 """
 function author_name_set(conf_name::String)::Set{String}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/id_name_key.txt") "No file with id, names, and DBLP keys of the authors of the conference "
     fn::String = path_to_files * "conferences/" * conf_name * "/" * "id_name_key.txt"
     authors::Set{String} = Set{String}()
     for line in eachline(fn)
@@ -38,6 +40,7 @@ end
 Return the total number of authors who have published at least one paper in the conference specified by the global acronym `conf`.
 """
 function number_authors(conf_name::String)::Int64
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/id_name_key.txt") "No file with id, names, and DBLP keys of the authors of the conference "
     fn::String = path_to_files * "conferences/" * conf_name * "/" * "id_name_key.txt"
     return countlines(fn)
 end
@@ -48,6 +51,7 @@ end
 Return the total number of papers that have been published in the conference specified by the global acronym `conf`.
 """
 function number_papers(conf_name::String)::Int64
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/papers.txt") "No file with list of papers the conference "
     fn::String = path_to_files * "conferences/" * conf_name * "/papers.txt"
     return countlines(fn)
 end
@@ -59,7 +63,8 @@ Return the first and the last year in which an edition of the conference specifi
 the global acronym `conf_name` has taken place.
 """
 function first_last_year(conf_name::String)::Tuple{Int64,Int64}
-    fn::String = path_to_files * "conferences/" * conf_name * "/" * "temporal_graph_conf_sorted.txt"
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/temporal_graph_conf_sorted.txt") "No file with sorted link stream of the conference " * conf_name
+    fn::String = path_to_files * "conferences/" * conf_name * "/temporal_graph_conf_sorted.txt"
     lines::Array{String} = readlines(fn)
     line::String = lines[1]
     split_line::Vector{String} = split(line, ",")
@@ -71,7 +76,8 @@ function first_last_year(conf_name::String)::Tuple{Int64,Int64}
 end
 
 function conferences(conf_name::String)::Tuple{Dict{String,Int64},Dict{String,Int64}}
-    f::IOStream = open("output/$conf_name/author_conferences.txt")
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/author_conferences.txt") "No file with list of conferences for each author of the conference "
+    f::IOStream = open(path_to_files * "conferences/" * conf_name * "/author_conferences.txt")
     conf_acronym::Dict{String,Int64} = Dict{String,Int64}()
     conf_occurrences::Dict{String,Int64} = Dict{String,Int64}()
     lines::Vector{String} = readlines(f)
@@ -107,6 +113,7 @@ Return the set of years, between the first and the last ones, in which an editio
 the conference specified by the global acronym `conf_name` has not taken place.
 """
 function missing_years(conf_name::String)::Set{Int64}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/temporal_graph_conf_sorted.txt") "No file with sorted link stream of the conference "
     cy, _ = first_last_year(conf_name)
     fn::String = path_to_files * "conferences/" * conf_name * "/" * "temporal_graph_conf_sorted.txt"
     my::Set{Int64} = Set{Int64}()
@@ -151,6 +158,7 @@ end
 Return the vector containing, for each year between the specified first and last year in which an edition of the conference specified by the global acronym `conf_name` has taken place, the number of papers published in this year.
 """
 function papers_year(conf_name::String, first_year::Int64, last_year::Int64)::Vector{Int64}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/papers.txt") "No file with list of papers of the conference "
     fn::String = path_to_files * "conferences/" * conf_name * "/papers.txt"
     num_papers::Vector{Int64} = zeros(Int64, last_year - first_year + 1)
     for line in eachline(fn)
@@ -197,6 +205,7 @@ end
 Return two vector containing, for each year between the specified first and last year in which an edition of the conference specified by the global acronym `conf_name` has taken place, the number of authors and of new authors, respectively, who published in this year.
 """
 function authors_year(conf_name::String, first_year::Int64, last_year::Int64)::Tuple{Array{Int64},Array{Int64}}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/papers.txt") "No file with list of papers of the conference "
     # Compute sets of authors for each year
     authors::Vector{Set{Int64}} = []
     for _ in 1:(last_year-first_year+1)
@@ -259,6 +268,7 @@ end
 Compute, for each year between the specified first and last year, the number of papers that have been published in the conference with a specific number of coauthors, between one and the maximum number of co-authors. The papers are grouped in periods specified by the value of `step` (that is, each period contains `step` years), and the maximum number of co-authors is computed over all years. 
 """
 function number_coauthors_distribution(conf_name::String, fy::Int64, ly::Int64, step::Int64)::Tuple{Vector{Int64},Vector{Vector{Int64}}}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/papers.txt") "No file with list of papers of the conference "
     num_authors::Int64 = number_authors(conf_name)
     num_buckets::Int64 = trunc(Int64, ceil((ly - fy + 1) / step))
     max_nc::Vector{Int64} = zeros(Int64, num_buckets)

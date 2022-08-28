@@ -14,7 +14,7 @@ function missing_author_name(conf_name::String, verbose::Bool)
         full_name_sex[split_line[1]*" "*split_line[3]] = split_line[2]
     end
     if (verbose)
-        println("The extra file contains ", length(keys(full_name_sex)), " manually classified full names.")
+        println("The full name file contains ", length(keys(full_name_sex)), " manually classified full names.")
     end
     fn::String = path_to_files * "names/first_name_genderize.txt"
     first_name_sex::Dict{String,String} = Dict{String,String}()
@@ -81,30 +81,28 @@ function author_sex_assignment(conf_name::String)::Dict{String,String}
     end
     first_name_sex::Dict{String,String} = Dict{String,String}()
     fn = path_to_files * "names/first_name_genderize.txt"
-    nna::Int64 = 0
     for line in eachline(fn)
         split_line::Vector{String} = split(line, ",")
-        if (split_line[2] == "")
-            nna = nna + 1
-        else
+        if (split_line[2] != "")
             first_name_sex[split_line[1]] = split_line[2]
         end
     end
+    conf_full_name_sex::Dict{String,String} = Dict{String,String}()
     fn = path_to_files * "conferences/" * conf_name * "/id_name_key.txt"
-    nna = 0
     for line in eachline(fn)
         split_line::Vector{String} = split(line, "##")
         if (get(full_name_sex, split_line[4], "") == "")
             split_name::Vector{String} = split(split_line[4], " ")
             if (get(first_name_sex, split_name[1], "") == "")
-                nna = nna + 1
-                full_name_sex[split_line[4]] = "none"
+                conf_full_name_sex[split_line[4]] = "none"
             else
-                full_name_sex[split_line[4]] = first_name_sex[split_name[1]]
+                conf_full_name_sex[split_line[4]] = first_name_sex[split_name[1]]
             end
+        else
+            conf_full_name_sex[split_line[4]] = full_name_sex[split_line[4]]
         end
     end
-    return full_name_sex
+    return conf_full_name_sex
 end
 
 """
@@ -113,6 +111,7 @@ end
 Return four arrays containing, for each year in which an edition of the conference has taken place, the number of authors, the number of male authors, the number of female authors, and the number of authors for which the sex is not specified. 
 """
 function author_sex_evolution(conf_name::String)::Tuple{Vector{Int64},Vector{Int64},Vector{Int64},Vector{Int64}}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/id_name_key.txt") "No file with id, names, and DBLP keys of the authors of the conference "
     fy::Int64, ly::Int64 = first_last_year(conf_name)
     full_name_sex::Dict{String,String} = author_sex_assignment(conf_name)
     id_full_name::Dict{Int64,String} = Dict{Int64,String}()

@@ -26,6 +26,7 @@ using WordCloud
 """
 The path to the directory `conferences` containing the text files produced by the Java library `ccdm.jar` (default path is `./conferencemining/`). This directory has to be a subdirectory of the working directory of Julia (the working directory can be shown by issuing the command `pwd()`).
 """
+# global path_to_files = "/Users/piluc/Desktop/conferencemining/"
 global path_to_files = "./conferencemining/"
 """
 The list of conferences downloaded by default (March 2022) by running the `ccdm.jar` Java file without arguments.
@@ -71,5 +72,6 @@ include("titleminer.jl")
 include("graphminerutils.jl")
 include("graphminer.jl")
 include("html.jl")
+include("htmlutils.jl")
 
 end

@@ -4,6 +4,8 @@
 Generate the plots, for each year in which an edition of the conference has taken place, of the percentage of the number of male authors, the number of female authors, and the number of authors for which the sex is not specified. The first two percentages are with respect to the number of authors for which the sex is known.
 """
 function perc_sex_plot(conf_name::String)::String
+    @assert length(conf_name) > 0 "The conference name is empty"
+    mkpath(path_to_files * "images/" * conf_name)
     first_year::Int64, last_year::Int64 = first_last_year(conf_name)
     layout = Layout(autosize=true, width=plot_width, height=plot_height, yaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, scaleratio=0.25, tickformat=".2%"), yaxis_title="Percentage of authors", xaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, range=[first_year - 1, last_year + 1], constrain="domain"), xaxis_title="Year", legend=attr(x=1, xanchor="right", y=1.02, yanchor="bottom", orientation="h", title="Sex"))
     x_years = range(first_year, last_year, step=1)
@@ -26,31 +28,63 @@ Generate the plots, for each conference whose global acronym is in `conf` and fo
 """
 function female_male_ratio_plot(conf::Array{String}, first::Int64, fo::String)::String
     first_year::Int64, last_year::Int64 = first_last_year(conf)
-    layout = Layout(autosize=true, width=plot_width, height=plot_height, yaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, scaleratio=0.25), yaxis_title="Female/male ratio", xaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, range=[first_year - 1, last_year + 1], constrain="domain"), xaxis_title="Year", legend=attr(x=1, xanchor="right", y=1.02, yanchor="bottom", orientation="h", title="Conference"))
+    layout = Layout(autosize=true, width=plot_width, height=plot_height, yaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, scaleratio=0.25), yaxis_title="Female/male ratio", xaxis=attr(showline=true, linewidth=2, linecolor="black", mirror=true, range=[first_year - 1, last_year + 1], constrain="domain"), xaxis_title="Year", legend=attr(x=1, xanchor="right", y=1.02, yanchor="bottom", orientation="h", title="Female/male ratio"))
     x_years = range(first_year, last_year, step=1)
     female_male_ratio = GenericTrace[]
     _, nma, nfa, _ = author_sex_evolution(conf[first])
     to_be_plot::Array{Float64} = zeros(last_year - first_year + 1)
     fy::Int64, ly::Int64 = first_last_year(conf[first])
-    for y in (fy-first_year+1):(ly-first_year+1)
-        to_be_plot[y] = nfa[y-(fy-first_year)] / nma[y-(fy-first_year)]
+    i_plot::Int64 = 1
+    for _ in first_year:(fy-1)
+        to_be_plot[i_plot] = -1
+        i_plot = i_plot + 1
     end
-    trace = scatter(x=x_years, y=replace(to_be_plot, 0 => NaN), mode="lines+markers", line_shape="spline", connectgaps=true, name=conf[first])
+    for y in fy:ly
+        if (nma[y-fy+1] == 0 && nfa[y-fy+1] == 0)
+            to_be_plot[i_plot] = -1
+        elseif (nma[y-fy+1] == 0 && nfa[y-fy+1] > 0)
+            to_be_plot[i_plot] = 1
+        else
+            to_be_plot[i_plot] = nfa[y-fy+1] / nma[y-fy+1]
+        end
+        i_plot = i_plot + 1
+    end
+    for _ in (ly+1):last_year
+        to_be_plot[i_plot] = -1
+        i_plot = i_plot + 1
+    end
+    trace = scatter(x=x_years, y=replace(to_be_plot, -1 => NaN), mode="lines+markers", line_shape="spline", connectgaps=true, name=conf[first])
     push!(female_male_ratio, trace)
     for c in 1:length(conf)
         if (c != first)
             _, nma, nfa, _ = author_sex_evolution(conf[c])
             to_be_plot = zeros(last_year - first_year + 1)
             fy, ly = first_last_year(conf[c])
-            for y in (fy-first_year+1):(ly-first_year+1)
-                to_be_plot[y] = nfa[y-(fy-first_year)] / nma[y-(fy-first_year)]
+            i_plot = 1
+            for _ in first_year:(fy-1)
+                to_be_plot[i_plot] = -1
+                i_plot = i_plot + 1
             end
-            trace = scatter(x=x_years, y=replace(to_be_plot, 0 => NaN), mode="lines+markers", line_shape="spline", connectgaps=true, name=conf[c], visible="legendonly")
+            for y in fy:ly
+                if (nma[y-fy+1] == 0 && nfa[y-fy+1] == 0)
+                    to_be_plot[i_plot] = -1
+                elseif (nma[y-fy+1] == 0 && nfa[y-fy+1] > 0)
+                    to_be_plot[i_plot] = 1
+                else
+                    to_be_plot[i_plot] = nfa[y-fy+1] / nma[y-fy+1]
+                end
+                i_plot = i_plot + 1
+            end
+            for _ in (ly+1):last_year
+                to_be_plot[i_plot] = -1
+                i_plot = i_plot + 1
+            end
+            trace = scatter(x=x_years, y=replace(to_be_plot, -1 => NaN), mode="lines+markers", line_shape="spline", connectgaps=true, name=conf[c], visible="legendonly")
             push!(female_male_ratio, trace)
         end
     end
     p = plot(female_male_ratio, layout, config=PlotConfig(modeBarButtonsToRemove=plot_buttons_to_remove, displaylogo=plot_logo))
-    savefig(p, path_to_files * "images/" * fo * ".html")
+    savefig(p, path_to_files * "images/" * conf[first] * "/" * fo * ".html")
 end
 
 """
@@ -59,14 +93,13 @@ end
    Generate, for each conference whose global acronym is contained in `conf`, the plot showing the percentage of authors whose sex has not been determined.
 """
 function missing_sex_bar_chart(conf::Array{String}, emph::Int64, fo::String)::String
+    @assert length(conf) > 0 "The conference vector is empty"
+    @assert emph >= 0 && emph <= length(conf) "The index of the conference to be emphasized is out of range"
+    @assert length(fo) > 0 "The HTML file name is empty"
     pma::Array{Float64} = zeros(length(conf))
     for c in 1:length(conf)
-        na::Int64 = number_authors(conf[c])
-        nm::Int64, nc::Int64, ns::Int64 = missing_author_name(conf[c], false)
-        if (nm > 0)
-            println("ERROR: the conference " * conf[c] * " has authors not queried")
-        end
-        pma[c] = (nc + ns) / na
+        sa::Dict{String,String} = author_sex_assignment(conf[c])
+        pma[c] = count(x -> sa[x] == "none", collect(keys(sa))) / length(keys(sa))
     end
     pmap::Array{Int64} = sortperm(pma)
     emph_pos::Int64 = 0
@@ -85,7 +118,13 @@ function missing_sex_bar_chart(conf::Array{String}, emph::Int64, fo::String)::St
         color_vec[emph_pos] = "red"
     end
     p = plot(bar(x=x_conf, y=y_pma, marker_color=color_vec), layout, config=PlotConfig(modeBarButtonsToRemove=plot_buttons_to_remove, displaylogo=plot_logo))
-    savefig(p, path_to_files * "images/" * fo * ".html")
+    if (emph > 0)
+        mkpath(path_to_files * "images/" * conf[emph])
+        savefig(p, path_to_files * "images/" * conf[emph] * "/" * fo * ".html")
+    else
+        mkpath(path_to_files * "images/" * conf[1])
+        savefig(p, path_to_files * "images/" * conf[1] * "/" * fo * ".html")
+    end
 end
 
 """

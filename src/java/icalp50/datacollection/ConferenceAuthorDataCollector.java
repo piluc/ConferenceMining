@@ -142,9 +142,13 @@ public class ConferenceAuthorDataCollector {
 				int last_suffix = Integer.parseInt(args[5 + num_arguments_conf * c]);
 				int num_parts = Integer.parseInt(args[6 + num_arguments_conf * c]);
 				for (int suffix = first_suffix; suffix <= last_suffix; suffix++) {
+					String suffixString = "" + suffix;
+					if (suffix < 10) {
+						suffixString = "0" + suffixString;
+					}
 					if (num_parts == 1) {
 						TableOfContents toc = dblp
-								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffix + ".bht");
+								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffixString + ".bht");
 						if (toc != null) {
 							int real_year = ((Publication) (toc.getPublications().toArray()[0])).getYear();
 							PrintWriter year_paper_pw = new PrintWriter(
@@ -155,13 +159,13 @@ public class ConferenceAuthorDataCollector {
 						}
 					} else {
 						TableOfContents toc = dblp
-								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffix + "-1.bht");
+								.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffixString + "-1.bht");
 						if (toc != null) {
 							int real_year = ((Publication) (toc.getPublications().toArray()[0])).getYear();
 							PrintWriter year_paper_pw = new PrintWriter(
 									"./conferences/" + conf + "/papers/paper_titles_" + real_year + ".txt");
 							for (int p = 1; p <= num_parts; p++) {
-								toc = dblp.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffix + "-" + p
+								toc = dblp.getToc("db/" + conf_type + "/" + conf_dir + "/" + conf_syn + suffixString + "-" + p
 										+ ".bht");
 								if (toc != null) {
 									save_titles(conf, toc, year_paper_pw);
