@@ -4,6 +4,11 @@ This repository includes and explains the code used for the [comparative analysi
 
 If you want to start using the code and analysing a conference (included in the DBLP dataset), you can read the [tutorial](https://slides.com/piluc/conferencemining?token=-YK83Rbq), which explains the steps to be done in order to generate a web page describing the data- and graph-mining analysis of the conference (for any question, comment, or error, do not hesitate to contact me).
 
+If you want to cite this software, please cite the following two papers.
+
+- Pierluigi Crescenzi: Thirty Years of SIROCCO. A Data and Graph Mining Comparative Analysis of Its Temporal Evolution. Proc. SIROCCO: 18-32 (2023).
+- Luca Aceto, Pierluigi Crescenzi: CONCUR through time. BEATCS, vol. 138 (2022).
+
 ## Table of contents
 
 1. [Data collection code](#datacollection)
@@ -163,7 +168,7 @@ The data and graph mining software has been developed in Julia. The documentatio
 
     `Main.Miner.one_conference_sex_mining("concur", true)`
 
-    In order to execute this command, you need the two files `first_name_genderize.txt` and `full_name_manual.txt`, whose content and format is explained in the documentation and that have to be located in the `names` directory. If you want the two files used for the analysis of the CONCUR conference, send me a message.
+    In order to execute this command, you need the two files `first_name_genderize.txt` and `full_name_manual.txt`, whose content and format is explained in the documentation and that have to be located in the `names` directory. If you want the two files used for the analysis of the CONCUR conference and of the SIROCCO conference, send me a message.
 
 3. Title analysis.
 
