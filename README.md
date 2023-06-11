@@ -7,4 +7,4 @@ If you want to start using the code and analysing a conference (included in the 
 If you want to cite this software, please cite the following two papers.
 
 - Pierluigi Crescenzi: [Thirty Years of SIROCCO. A Data and Graph Mining Comparative Analysis of Its Temporal Evolution](https://link.springer.com/chapter/10.1007/978-3-031-32733-9_2). Proc. SIROCCO: 18-32 (2023).
-- Luca Aceto, Pierluigi Crescenzi: [CONCUR through time] (http://bulletin.eatcs.org/index.php/beatcs/article/view/737). BEATCS, vol. 138 (2022).
+- Luca Aceto, Pierluigi Crescenzi: [CONCUR through time](http://bulletin.eatcs.org/index.php/beatcs/article/view/737). BEATCS, vol. 138 (2022).
