@@ -68,7 +68,7 @@ EnglishText.Pluralize.IRREGULAR_CLS["synchronous"] = "synchronous"
 """
 The words not to be considered in the title analysis
 """
-global forbidden_words = [",", ";", ":", ".", "{", "}", "[", "]", "(", ")", "!", "?", "/", "1", "2", "3", "4", "5", "6", "7", "8", "9", "brief announcement", "extended abstract"]
+global forbidden_words = [",", ";", ":", ".", "{", "}", "[", "]", "(", ")", "!", "?", "/", "1", "2", "3", "4", "5", "6", "7", "8", "9", "brief", "announcement", "brief announcement", "extended abstract"]
 
 include("dataminerutils.jl")
 include("dataminer.jl")
