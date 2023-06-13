@@ -81,16 +81,17 @@ function diameter_ifub(g::SimpleGraph{Int64})::Int64
 end
 
 """
-   `graph_evolution(conf_name::String, first_year::Int64, last_year::Int64)::Tuple{Array{Int64},Array{Int64},Array{Float64},Array{Int64}}`
+   `graph_evolution(conf_name::String, first_year::Int64, last_year::Int64)::Tuple{Array{Int64},Array{Int64},Array{Float64},Array{Int64},Array{Int64}}`
 
 Return four vectors containing the evolution of the number of nodes, of the number of edges, of the diameter of the largest connected component, and of the average distance of the largest connected component, respeticely, of the graph corresponding to the conference `conf_name`.
 """
-function graph_evolution(conf_name::String, first_year::Int64, last_year::Int64)::Tuple{Array{Int64},Array{Int64},Array{Float64},Array{Int64}}
+function graph_evolution(conf_name::String, first_year::Int64, last_year::Int64)::Tuple{Array{Int64},Array{Int64},Array{Float64},Array{Int64},Array{Int64}}
     fn::String = path_to_files * "conferences/" * conf_name * "/" * "temporal_graph_sorted.txt"
     num_nodes::Array{Int64} = zeros(Int64, last_year - first_year + 1)
     num_edges::Array{Int64} = zeros(Int64, last_year - first_year + 1)
     degree_separation::Array{Float64} = zeros(Float64, last_year - first_year + 1)
     diameter::Array{Int64} = zeros(Int64, last_year - first_year + 1)
+    e_diameter::Array{Int64} = zeros(Int64, last_year - first_year + 1)
     g::SimpleGraph{Int64} = SimpleGraph{Int64}()
     id_node::Dict{Int64,Int64} = Dict{Int64,Int64}()
     current_year::Int64 = first_year
@@ -119,6 +120,7 @@ function graph_evolution(conf_name::String, first_year::Int64, last_year::Int64)
                 num_edges[current_year-first_year+1] = ne(g)
                 degree_separation[current_year-first_year+1] = degrees_of_separation(g)
                 diameter[current_year-first_year+1] = diameter_ifub(g)
+                e_diameter[current_year-first_year+1] = effective_diameter(g)
                 current_year = y
                 if (get(id_node, u, 0) == 0)
                     add_vertex!(g)
@@ -138,7 +140,8 @@ function graph_evolution(conf_name::String, first_year::Int64, last_year::Int64)
     num_edges[current_year-first_year+1] = ne(g)
     degree_separation[current_year-first_year+1] = degrees_of_separation(g)
     diameter[current_year-first_year+1] = diameter_ifub(g)
-    return num_nodes, num_edges, degree_separation, diameter
+    e_diameter[current_year-first_year+1] = effective_diameter(g)
+    return num_nodes, num_edges, degree_separation, diameter, e_diameter
 end
 
 """
@@ -159,6 +162,51 @@ function top_k_authors(conf_name::String, k::Int64)::Tuple{Vector{Int64},Vector{
     top_c = partialsortperm(c, 1:k, rev=true)
     top_b = partialsortperm(b, 1:k, rev=true)
     return id_map[top_d], id_map[top_c], id_map[top_b]
+end
+
+"""
+   `effective_diameter(g::SimpleGraph{Int64})::Int64`
+
+Return the effective diameter of the largest connected component of the graph `g`.
+"""
+function effective_diameter(g::SimpleGraph{Int64})::Int64
+    if (nv(g) > 0)
+        g = lcc_subgraph(g)
+        if (nv(g) > 1)
+            dist_freq::Array{Int64} = zeros(Int64, nv(g))
+            for u in 1:nv(g)
+                d::Array{Int64} = gdistances(g, u)
+                for v in 1:nv(g)
+                    dist_freq[d[v]+1] = dist_freq[d[v]+1] + 1
+                end
+            end
+            num_pairs::Int64 = 0
+            current_dist::Int64 = 0
+            while (num_pairs < 0.9 * nv(g) * nv(g))
+                current_dist = current_dist + 1
+                num_pairs = num_pairs + dist_freq[current_dist]
+            end
+            return current_dist - 1
+        else
+            return 0
+        end
+    else
+        return 0
+    end
+end
+
+function lin_reg(conf::Array{String})
+    for c in 1:lastindex(conf)
+        fy::Int64, ly::Int64 = first_last_year(conf[c])
+        nn, ne, _, _ = Main.Miner.graph_evolution(conf[c], fy, ly)
+        lnn = log.(nn)
+        push!(lnn, 0.0)
+        lne = log.(ne)
+        push!(lne, 0.0)
+        data = DataFrame(X=lnn, Y=lne)
+        ols = lm(@formula(Y ~ X), data)
+        println(conf[c], " & ", ols.model.pp.beta0[2], " & ", r2(ols))
+    end
 end
 
 #####################################################

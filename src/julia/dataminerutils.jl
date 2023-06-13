@@ -2,13 +2,48 @@
 # DATA MINER UTILITIES
 #####################################################
 """
+   `last_year_age(conf_name::String)::Tuple{Array{Int64},Array{Int64}}`
+
+Return the vectors containing the last year and the academic age of all authors who have published at least one paper in the conference specified by the global acronym `conf_name`. The index of an author is its id, while the academic age is the difference between the year of its last paper and the year of its first paper (plus one).
+"""
+function last_year_age(conf_name::String)::Tuple{Array{Int64},Array{Int64}}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/author_paper_titles.txt") "No file with paper titles of the authors of the conference"
+    fn::String = path_to_files * "conferences/" * conf_name * "/" * "author_paper_titles.txt"
+    na::Int64 = number_authors(conf_name)
+    id_age::Array{Int64} = zeros(Int64, na)
+    last_year::Array{Int64} = zeros(Int64, na)
+    current_id::Int64 = 0
+    fy::Int64 = 0
+    ly::Int64 = 0
+    y::Int64 = 0
+    for line in eachline(fn)
+        split_line::Vector{String} = split(line, "##")
+        if (split_line[1] == "i")
+            if (current_id > 0)
+                last_year[current_id] = ly
+                id_age[current_id] = ly - fy + 1
+            end
+            current_id = parse(Int64, split_line[2])
+            fy = typemax(Int64)
+            ly = typemin(Int64)
+        else
+            y = parse(Int64, split_line[2])
+            fy = Base.min(fy, y)
+            ly = Base.max(ly, y)
+        end
+    end
+    last_year[current_id] = ly
+    id_age[current_id] = ly - fy + 1
+    return last_year, id_age
+end
+
+"""
    `author_key_set(conf_name::String)::Set{String}`
 
-Return the set of the DBLP keys of all authors who have published at least one paper 
-in the conference specified by the global acronym `conf_name`.
+Return the set of the DBLP keys of all authors who have published at least one paper in the conference specified by the global acronym `conf_name`.
 """
 function author_key_set(conf_name::String)::Set{String}
-    @assert isfile(path_to_files * "conferences/" * conf_name * "/id_name_key.txt") "No file with id, names, and DBLP keys of the authors of the conference "
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/id_name_key.txt") "No file with id, names, and DBLP keys of the authors of the conference"
     fn::String = path_to_files * "conferences/" * conf_name * "/" * "id_name_key.txt"
     authors::Set{String} = Set{String}()
     for line in eachline(fn)
@@ -104,7 +139,6 @@ function conferences(conf_name::String)::Tuple{Dict{String,Int64},Dict{String,In
     end
     return conf_acronym, conf_occurrences
 end
-
 
 """
    `missing_years(conf_name::String)::Set{Int64}`
@@ -217,7 +251,7 @@ function authors_year(conf_name::String, first_year::Int64, last_year::Int64)::T
         year::Int64 = parse(Int64, split_line[2])
         if (year >= first_year && year <= last_year)
             author::Vector{String} = split(split_line[6][2:prevind(split_line[6], end)], ",")
-            for a in 1:length(author)
+            for a in 1:lastindex(author)
                 id::Int64 = parse(Int64, author[a])
                 if (!in(id, authors[year-first_year+1]))
                     push!(authors[year-first_year+1], id)
@@ -299,25 +333,216 @@ function number_coauthors_distribution(conf_name::String, fy::Int64, ly::Int64, 
 end
 
 """
+   `new_authors_mean(conf_name::String, first_year::Int64, last_year::Int64)::Float64`
+
+Compute, for the conference specified by the global acronym `conf_name`, the average number of new authors in the editions between the one in `first_year` and the one in`last_year`. 
+"""
+function new_authors_mean(conf_name::String, first_year::Int64, last_year::Int64)::Float64
+    fy::Int64, ly::Int64 = first_last_year(conf_name)
+    if (fy > first_year)
+        fy = first_year
+    end
+    if (ly < last_year)
+        ly = last_year
+    end
+    ify::Int64 = 1 + first_year - fy
+    ily::Int64 = 1 + last_year - fy
+    nay::Vector{Int64}, nnay::Vector{Int64} = authors_year(conf_name, fy, ly)
+    ny::Int64 = count(x -> x > 0, nay[ify:ily])
+    nam = 0.0
+    for y in ify:ily
+        if (nay[y] > 0)
+            nam = nam + nnay[y] / nay[y]
+        end
+    end
+    nam = nam / ny
+    return nam
+end
+
+"""
    `new_authors_mean(conf::Array{String})::Vector{Float64}`
 
-Compute, for each conference specified by a global acronym contained in the vector `conf`, the average number of new authors. 
+Compute, for each conference specified by a global acronym contained in the vector `conf`, the average number of new authors in all editions. 
 """
 function new_authors_mean(conf::Array{String})::Vector{Float64}
     nam::Vector{Float64} = zeros(length(conf))
     for c in 1:length(conf)
         first_year::Int64, last_year::Int64 = first_last_year(conf[c:c])
-        nay::Vector{Int64}, nnay::Vector{Int64} = authors_year(conf[c], first_year, last_year)
-        ny::Int64 = count(x -> x > 0, nay)
-        nam[c] = 0.0
-        for y in 1:(last_year-first_year+1)
-            if (nay[y] > 0)
-                nam[c] = nam[c] + nnay[y] / nay[y]
-            end
-        end
-        nam[c] = nam[c] / ny
+        nam[c] = new_authors_mean(conf[c], first_year, last_year)
     end
     return nam
+end
+
+"""
+   `new_authors_mean(conf::Array{String}, first_year::Int64, last_year::Int64)::Vector{Float64}`
+
+Compute, for each conference specified by a global acronym contained in the vector `conf`, the average number of new authors in all editions between the first and the last year. 
+"""
+function new_authors_mean(conf::Array{String}, first_year::Int64, last_year::Int64)::Vector{Float64}
+    nam::Vector{Float64} = zeros(length(conf))
+    for c in 1:length(conf)
+        nam[c] = new_authors_mean(conf[c], first_year, last_year)
+    end
+    return nam
+end
+
+function author_cumulative_set_year(conf_name::String)::Vector{Set{Int64}}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/papers.txt") "No file with list of papers of the conference "
+    first_year::Int64, last_year::Int64 = first_last_year(conf_name)
+    authors::Vector{Set{Int64}} = []
+    for _ in 1:(last_year-first_year+1)
+        push!(authors, Set{Int64}())
+    end
+    fn::String = path_to_files * "conferences/" * conf_name * "/papers.txt"
+    for line in eachline(fn)
+        split_line::Vector{String} = split(line, "##")
+        year::Int64 = parse(Int64, split_line[2])
+        author::Vector{String} = split(split_line[6][2:prevind(split_line[6], end)], ",")
+        for a in 1:lastindex(author)
+            id::Int64 = parse(Int64, author[a])
+            if (!in(id, authors[year-first_year+1]))
+                push!(authors[year-first_year+1], id)
+            end
+        end
+    end
+    for y in (first_year+1):last_year
+        union!(authors[y-first_year+1], authors[y-first_year])
+    end
+    return authors
+end
+
+function author_cumulative_key_set_year(conf_name::String)::Vector{Set{String}}
+    @assert isfile(path_to_files * "conferences/" * conf_name * "/papers.txt") "No file with list of papers of the conference "
+    first_year::Int64, last_year::Int64 = first_last_year(conf_name)
+    id_key::Dict{Int64,String} = author_id_key(conf_name)
+    authors::Vector{Set{String}} = []
+    for _ in 1:(last_year-first_year+1)
+        push!(authors, Set{String}())
+    end
+    fn::String = path_to_files * "conferences/" * conf_name * "/papers.txt"
+    for line in eachline(fn)
+        split_line::Vector{String} = split(line, "##")
+        year::Int64 = parse(Int64, split_line[2])
+        author::Vector{String} = split(split_line[6][2:prevind(split_line[6], end)], ",")
+        for a in 1:lastindex(author)
+            id::Int64 = parse(Int64, author[a])
+            if (!in(id_key[id], authors[year-first_year+1]))
+                push!(authors[year-first_year+1], id_key[id])
+            end
+        end
+    end
+    for y in (first_year+1):last_year
+        union!(authors[y-first_year+1], authors[y-first_year])
+    end
+    return authors
+end
+
+function similarity_indices(conf_name::String, conf::Array{String})
+    fy, ly = first_last_year(conf_name)
+    acks = author_cumulative_key_set_year(conf_name)
+    si::Matrix{Float64} = zeros(length(conf), ly - fy + 1)
+    for c in 1:lastindex(conf)
+        fyc, lyc = first_last_year(conf[c])
+        acksc = author_cumulative_key_set_year(conf[c])
+        for y in fyc:lyc
+            if (y >= fy && y <= ly)
+                yi = y - fy + 1
+                yic = y - fyc + 1
+                as1 = acks[yi]
+                as2 = acksc[yic]
+                si[c, yi] = length(intersect(as1, as2)) / length(union(as1, as2))
+                si[c, yi] = (2 .* si[c, yi]) ./ (1 .+ si[c, yi])
+            end
+        end
+    end
+    return si
+end
+
+function fully_new_author_year(conf_name::String)::Vector{Set{Int64}}
+    first_year::Int64, last_year::Int64 = first_last_year(conf_name)
+    cumulative_authors::Vector{Set{Int64}} = author_cumulative_set_year(conf_name)
+    fully_new_authors::Vector{Set{Int64}} = []
+    for _ in 1:(last_year-first_year+1)
+        push!(fully_new_authors, Set{Int64}())
+    end
+    fully_new_authors[1] = cumulative_authors[1]
+    fn::String = path_to_files * "conferences/" * conf_name * "/papers.txt"
+    for line in eachline(fn)
+        split_line::Vector{String} = split(line, "##")
+        year::Int64 = parse(Int64, split_line[2])
+        if (year > first_year)
+            author::Vector{String} = split(split_line[6][2:prevind(split_line[6], end)], ",")
+            fully_new::Bool = true
+            for a in 1:lastindex(author)
+                id::Int64 = parse(Int64, author[a])
+                if (in(id, cumulative_authors[year-first_year]))
+                    fully_new = false
+                    break
+                end
+            end
+            if (fully_new)
+                for a in 1:lastindex(author)
+                    push!(fully_new_authors[year-first_year+1], parse(Int64, author[a]))
+                end
+            end
+        end
+    end
+    return fully_new_authors
+end
+
+"""
+   `fully_new_authors_mean(conf_name::String, first_year::Int64, last_year::Int64)::Float64`
+
+Compute, for the conference specified by the global acronym `conf_name`, the average number of fully new authors in the editions between the first and the last year. 
+"""
+function fully_new_authors_mean(conf_name::String, first_year::Int64, last_year::Int64)::Float64
+    fy::Int64, ly::Int64 = first_last_year(conf_name)
+    if (fy > first_year)
+        fy = first_year
+    end
+    if (ly < last_year)
+        ly = last_year
+    end
+    ify::Int64 = 1 + first_year - fy
+    ily::Int64 = 1 + last_year - fy
+    nay::Vector{Int64}, _ = authors_year(conf_name, fy, ly)
+    fnay::Vector{Set{Int64}} = fully_new_author_year(conf_name)
+    ny::Int64 = count(x -> x > 0, nay[ify:ily])
+    fnam = 0.0
+    for y in ify:ily
+        if (nay[y] > 0)
+            fnam = fnam + length(fnay[y]) / nay[y]
+        end
+    end
+    fnam = fnam / ny
+    return fnam
+end
+
+"""
+   `new_authors_mean(conf::Array{String})::Vector{Float64}`
+
+Compute, for each conference specified by a global acronym contained in the vector `conf`, the average number of fully new authors in all editions. 
+"""
+function fully_new_authors_mean(conf::Array{String})::Vector{Float64}
+    fnam::Vector{Float64} = zeros(length(conf))
+    for c in 1:length(conf)
+        first_year::Int64, last_year::Int64 = first_last_year(conf[c:c])
+        fnam[c] = fully_new_authors_mean(conf[c], first_year, last_year)
+    end
+    return fnam
+end
+
+"""
+   `fully_new_authors_mean(conf::Array{String})::Vector{Float64}`
+
+Compute, for each conference specified by a global acronym contained in the vector `conf`, the average number of fully new authors in all editions between the first and the last year. 
+"""
+function fully_new_authors_mean(conf::Array{String}, first_year::Int64, last_year::Int64)::Vector{Float64}
+    fnam::Vector{Float64} = zeros(length(conf))
+    for c in 1:length(conf)
+        fnam[c] = fully_new_authors_mean(conf[c], first_year, last_year)
+    end
+    return fnam
 end
 
 """
@@ -335,4 +560,62 @@ function similarity_indices(conf1::Array{String}, conf2::Array{String})::Matrix{
         end
     end
     return (2 .* j) ./ (1 .+ j)
+end
+
+# Research question 3
+
+function author_id_key(conf::String)::Dict{Int64,String}
+    id_key::Dict{Int64,String} = Dict{Int64,String}()
+    fn::String = path_to_files * "conferences/" * conf * "/" * "id_name_key.txt"
+    for line in eachline(fn)
+        split_line::Vector{String} = split(line, "##")
+        id_key[parse(Int64, split_line[2])] = split_line[6]
+    end
+    return id_key
+end
+
+function author_key_name(conf::Array{String})::Dict{String,String}
+    key_name::Dict{String,String} = Dict{String,String}()
+    for conf_name in conf
+        fn::String = path_to_files * "conferences/" * conf_name * "/" * "id_name_key.txt"
+        for line in eachline(fn)
+            split_line::Vector{String} = split(line, "##")
+            if (get(key_name, split_line[6], "") == "")
+                key_name[split_line[6]] = split_line[4]
+            end
+        end
+    end
+    return key_name
+end
+
+function author_last_year_age(conf::Array{String})::Dict{String,Tuple{Int64,Int64}}
+    last_year_age::Dict{String,Tuple{Int64,Int64}} = Dict{String,Tuple{Int64,Int64}}()
+    for conf_name in conf
+        fn::String = path_to_files * "conferences/" * conf_name * "/" * "author_paper_titles.txt"
+        current_id::Int64 = 0
+        current_key::String = ""
+        fy::Int64 = 0
+        ly::Int64 = 0
+        y::Int64 = 0
+        for line in eachline(fn)
+            split_line::Vector{String} = split(line, "##")
+            if (split_line[1] == "i")
+                if (current_id > 0 && get(last_year_age, current_key, "") == "")
+                    last_year_age[current_key] = (ly, ly - fy + 1)
+                end
+                current_id = parse(Int64, split_line[2])
+                current_key = split_line[6]
+                fy = typemax(Int64)
+                ly = typemin(Int64)
+            else
+                y = parse(Int64, split_line[2])
+                fy = Base.min(fy, y)
+                ly = Base.max(ly, y)
+            end
+        end
+        if (get(last_year_age, current_key, "") == "")
+            last_year_age[current_key] = (ly, ly - fy + 1)
+        end
+    end
+    return last_year_age
 end

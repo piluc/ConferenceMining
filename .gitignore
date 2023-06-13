@@ -23,3 +23,6 @@ Project.toml
 
 # Mac OS X file
 .DS_Store
+
+# Input and output files
+conferencemining/
