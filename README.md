@@ -1,4 +1,4 @@
-# Introduction
+# The ConferenceMining repository
 
 This repository includes and explains the code used for the [comparative analysis](https://slides.com/piluc/icalp-50?token=fl3BBJ8j) presented at the exhibition on the history of ICALP in Paris, 2022, the analysis of the CONCUR conference, the [comparative analysis of the SIROCCO conference](https://slides.com/piluc/sirocco30?token=fDaMD1wY), and the [analysis of the LAGOS conference](http://www.pilucrescenzi.it/miner/examples/lagos/lagos.html).
 
