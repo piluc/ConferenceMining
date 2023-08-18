@@ -1,0 +1,1 @@
+6 sos conf sos sos 2004 2004 1 journals entcs entcs 156 156 1 conf sos sos 2006 2008 1 series eptcs eptcs 18 18 1 series eptcs eptcs 32 32 1 series eptcs eptcs 62 62 1 sos sos 2004 2004 entcs entcs156 2005 2005 sos sos 2006 2008 eptcs eptcs18 2009 2009 eptcs eptcs32 2010 2010 eptcs eptcs62 2011 2011 ne

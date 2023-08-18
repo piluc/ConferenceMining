@@ -11,7 +11,6 @@ using EzXML
 using Formatting
 using GLM
 using Graphs
-using GraphIO
 using LinearAlgebra
 using Missings
 using MultivariateStats
